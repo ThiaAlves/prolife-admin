@@ -1,5 +1,10 @@
 body {
     font-size: .875rem;
+    background-image: url("https://img.freepik.com/free-vector/clean-medical-background_53876-116875.jpg?w=2000");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 .feather {
@@ -55,7 +60,7 @@ body {
 }
 
 .sidebar .nav-link.active {
-    color: #2470dc;
+    color: #a5a8af;
 }
 
 .sidebar .nav-link:hover .feather,

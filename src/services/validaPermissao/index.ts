@@ -8,13 +8,13 @@ export const validaPermissao = (
     if (token) {
         const user = jwt_decode<{
             email: string,
-            id: number,
-            nome: string,
-            tipo: string
+            // id: number,
+            unique_name: string,
+            role: string
         }>(token);
 
         const temPermissao = permissao.includes(
-            user.tipo
+            user.role
         );
 
         if (temPermissao) {

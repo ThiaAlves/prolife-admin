@@ -30,20 +30,20 @@ export function AutenticacaoProvider({children}: InterProviderProps) {
     async function logar(dados: InterDados) {
         try {
             let resultado = await api.post('/Login', dados)
-            if(resultado.data.access_token !== undefined){
+            if(resultado.data.token !== undefined){
 
             setCookie(
                 undefined,
                 'painel-token',
-                resultado.data.access_token
+                resultado.data.token
             )
 
             const user = jwt_decode<{
                 unique_name: string,
                 // id: number,
-                // nome: string,
+                email: string,
                 role: string
-            }>(resultado.data.access_token);
+            }>(resultado.data.token);
 
             if(user.role === 'administrador'){
                 router.push('/dashboard');

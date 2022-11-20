@@ -4,39 +4,46 @@ import { GetServerSideProps } from "next";
 import { parseCookies } from 'nookies';
 import { validaPermissao } from '../../services/validaPermissao';
 import { useContext, useEffect, useState } from 'react';
-import { UsuariosContext } from '../../contexts/ListaUsuarioContext';
+// import { ClientesContext } from '../../contexts/ListaUsuarioContext';
 import { useRouter } from 'next/router';
 import api from '../../services/request';
 import Swal from "sweetalert2";
-import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheckLg } from 'react-icons/bs';
+import { BsTrash, BsPencil, BsGear, BsHash, BsPlusLg, BsShieldX,  BsClipboardPlus,  BsCheckLg,  BsPhone, BsCreditCard2Front } from 'react-icons/bs';
 
 interface interfProps {
     token?: string;
 }
 
-interface interfUsuario {
+interface interfCliente {
     id: number;
     nome: string;
-    email: string;
-    tipo_Usuario: string;
+    cpf: string;
+    cep: string;
+    logradouro?: string;
+    bairro?: string;
+    cidade?: string;
+    estado?: string;
+    numero?: string;
+    telefone?: string;
+    tipo_Sanguineo?: string;
+    religiao?: string;
     status?: string;
 }
 
-
-export default function Usuario(props: interfProps) {
+export default function Cliente(props: interfProps) {
     const router = useRouter();
 
-    const [usuarios, setUsuarios] = useState<Array<interfUsuario>>([]);
+    const [clientes, setClientes] = useState<Array<interfCliente>>([]);
 
-    function deleteUser(id: number) {
-        api.delete(`/Usuarios/${id}`, {
+    function deleteCliente(id: number) {
+        api.delete(`/Clientes/${id}`, {
             headers: {
                 Authorization: "Bearer " + props.token,
             },
         })
             .then((res) => {
-                findUser();
-                Swal.fire(
+                findCliente();
+            Swal.fire(
                     'Deletado com Sucesso!',
                     'Click em OK!',
                     'success')
@@ -46,8 +53,8 @@ export default function Usuario(props: interfProps) {
             });
     }
 
-    function findUser() {
-        api.get("/Usuarios", {
+    function findCliente() {
+        api.get("/Clientes", {
             headers: {
                 Authorization: "Bearer " + props.token,
             },
@@ -65,22 +72,12 @@ export default function Usuario(props: interfProps) {
                     }
                     );
                 } else {
-                  setUsuarios(res.data);
+                  setClientes(res.data);
                 }
             })
             .catch((erro) => {
                 console.log(erro);
             });
-    }
-
-    function getTipo(tipo){
-        if (tipo === 'administrador') {
-            return <span className="badge bg-success"><BsShieldCheck/> Administrador</span>
-        } else if (tipo === 'atendente') {
-            return <span className="badge bg-warning"><BsShieldX/> Atendente</span>
-        } else if (tipo === 'enfermeiro') {
-            return <span className="badge bg-primary"><BsPeopleFill/> Enfermeiro</span>
-        }
     }
 
     function getStatus(status){
@@ -92,28 +89,30 @@ export default function Usuario(props: interfProps) {
     }
 
     useEffect(() => {
-        findUser();
+        findCliente();
     }, []);
     return(
         <>
+
             <Head>
-                <title>Usuários</title>
+                <title>Clientes</title>
             </Head>
 
             <Menu
-                active='usuario'
+                active='cliente'
                 token={props.token}
             >
-                                <div className="bg-light mt-4 p-3 shadow-lg rounded">
+                        <div className="bg-light mt-4 p-3 shadow-lg rounded">
                 <>
                     <div
                         className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
                     >
-                        <h2><BsFillPersonFill/> Usuários Cadastrados</h2>
+                        <h3>
+                            <BsClipboardPlus/> Clientes Cadastrados</h3>
                         <div
                             className="btn-toolbar mb-2 mb-md-0"
                         >
-                            <button type="button" onClick={() => router.push('/usuario/novo')}
+                            <button type="button" onClick={() => router.push('/cliente/novo')}
                             className="btn btn-success"><BsPlusLg/> Adicionar</button>
                         </div>
                     </div>
@@ -122,25 +121,25 @@ export default function Usuario(props: interfProps) {
                     <thead>
                         <tr>
                             <th><BsHash/> ID</th>
-                            <th><BsFillPersonFill/> Nome</th>
-                            <th><BsMailbox/> E-mail</th>
-                            <th><BsShieldFill/> Tipo</th>
+                            <th><BsClipboardPlus/> Nome</th> 
+                            <th><BsCreditCard2Front/> CPF</th> 
+                            <th><BsPhone/> Telefone</th>
                             <th><BsCheckLg/> Status</th>
                             <th><BsGear/> Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {usuarios.map((usuario: interfUsuario) => (
-                            <tr key={usuario.id}>
-                                <td width="10%" className="text-center">{usuario.id}</td>
-                                <td width="30%">{usuario.nome}</td>
-                                <td width="20%">{usuario.email}</td>
-                                <td width="10%">{getTipo(usuario.tipo_Usuario)}</td>
-                                <td width="15%" className="text-center">{getStatus(usuario.status)}</td>
+                        {clientes.map((cliente: interfCliente) => (
+                            <tr key={cliente.id}>
+                                <td width="10%" className="text-center">{cliente.id}</td>
+                                <td width="30%">{cliente.nome}</td>
+                                <td width="20%">{cliente.cep}</td>
+                                <td width="10%">{cliente.telefone}</td>
+                                <td width="15%" className="text-center">{getStatus(cliente.status)}</td>
                                 <td width="15%">
                                     <button type="button" className="btn btn-primary btn-sm m-1"
                                     onClick={() => {
-                                        router.push(`/usuario/${usuario.id}`)
+                                        router.push(`/cliente/${cliente.id}`)
                                     }}
                                     ><BsPencil/></button>
                                        <button
@@ -157,7 +156,7 @@ export default function Usuario(props: interfProps) {
                                                     cancelButtonText: 'Cancelar'
                                                 }).then((result) => {
                                                     if (result.isConfirmed) {
-                                                        deleteUser(usuario.id);
+                                                        deleteCliente(cliente.id);
                                                     }
                                                 })
                                             }}>

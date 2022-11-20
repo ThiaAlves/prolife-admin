@@ -4,39 +4,38 @@ import { GetServerSideProps } from "next";
 import { parseCookies } from 'nookies';
 import { validaPermissao } from '../../services/validaPermissao';
 import { useContext, useEffect, useState } from 'react';
-import { UsuariosContext } from '../../contexts/ListaUsuarioContext';
+// import { ClinicasContext } from '../../contexts/ListaUsuarioContext';
 import { useRouter } from 'next/router';
 import api from '../../services/request';
 import Swal from "sweetalert2";
-import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheckLg } from 'react-icons/bs';
+import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheck, BsCloudSun, BsClipboardPlus, BsMap, BsMapFill, BsCheckLg } from 'react-icons/bs';
 
 interface interfProps {
     token?: string;
 }
 
-interface interfUsuario {
+interface interfMedico {
     id: number;
     nome: string;
-    email: string;
-    tipo_Usuario: string;
+    especialidade: string;
+    clinicaId: number;
     status?: string;
 }
 
-
-export default function Usuario(props: interfProps) {
+export default function Medico(props: interfProps) {
     const router = useRouter();
 
-    const [usuarios, setUsuarios] = useState<Array<interfUsuario>>([]);
+    const [medicos, setMedicos] = useState<Array<interfMedico>>([]);
 
-    function deleteUser(id: number) {
-        api.delete(`/Usuarios/${id}`, {
+    function deleteMedico(id: number) {
+        api.delete(`/Medicos/${id}`, {
             headers: {
                 Authorization: "Bearer " + props.token,
             },
         })
             .then((res) => {
-                findUser();
-                Swal.fire(
+                findMedico();
+            Swal.fire(
                     'Deletado com Sucesso!',
                     'Click em OK!',
                     'success')
@@ -46,8 +45,8 @@ export default function Usuario(props: interfProps) {
             });
     }
 
-    function findUser() {
-        api.get("/Usuarios", {
+    function findMedico() {
+        api.get("/Medicos", {
             headers: {
                 Authorization: "Bearer " + props.token,
             },
@@ -65,22 +64,12 @@ export default function Usuario(props: interfProps) {
                     }
                     );
                 } else {
-                  setUsuarios(res.data);
+                  setMedicos(res.data);
                 }
             })
             .catch((erro) => {
                 console.log(erro);
             });
-    }
-
-    function getTipo(tipo){
-        if (tipo === 'administrador') {
-            return <span className="badge bg-success"><BsShieldCheck/> Administrador</span>
-        } else if (tipo === 'atendente') {
-            return <span className="badge bg-warning"><BsShieldX/> Atendente</span>
-        } else if (tipo === 'enfermeiro') {
-            return <span className="badge bg-primary"><BsPeopleFill/> Enfermeiro</span>
-        }
     }
 
     function getStatus(status){
@@ -92,28 +81,30 @@ export default function Usuario(props: interfProps) {
     }
 
     useEffect(() => {
-        findUser();
+        findMedico();
     }, []);
     return(
         <>
+
             <Head>
-                <title>Usuários</title>
+                <title>Médicos</title>
             </Head>
 
             <Menu
-                active='usuario'
+                active='medico'
                 token={props.token}
             >
-                                <div className="bg-light mt-4 p-3 shadow-lg rounded">
+                        <div className="bg-light mt-4 p-3 shadow-lg rounded">
                 <>
                     <div
                         className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
                     >
-                        <h2><BsFillPersonFill/> Usuários Cadastrados</h2>
+                        <h3>
+                            <BsClipboardPlus/> Médicos Cadastrados</h3>
                         <div
                             className="btn-toolbar mb-2 mb-md-0"
                         >
-                            <button type="button" onClick={() => router.push('/usuario/novo')}
+                            <button type="button" onClick={() => router.push('/medico/novo')}
                             className="btn btn-success"><BsPlusLg/> Adicionar</button>
                         </div>
                     </div>
@@ -122,25 +113,25 @@ export default function Usuario(props: interfProps) {
                     <thead>
                         <tr>
                             <th><BsHash/> ID</th>
-                            <th><BsFillPersonFill/> Nome</th>
-                            <th><BsMailbox/> E-mail</th>
-                            <th><BsShieldFill/> Tipo</th>
+                            <th><BsClipboardPlus/> Nome</th> 
+                            <th><BsMap/> Especialidade</th> 
+                            <th><BsMapFill/> Clinica</th>
                             <th><BsCheckLg/> Status</th>
                             <th><BsGear/> Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {usuarios.map((usuario: interfUsuario) => (
-                            <tr key={usuario.id}>
-                                <td width="10%" className="text-center">{usuario.id}</td>
-                                <td width="30%">{usuario.nome}</td>
-                                <td width="20%">{usuario.email}</td>
-                                <td width="10%">{getTipo(usuario.tipo_Usuario)}</td>
-                                <td width="15%" className="text-center">{getStatus(usuario.status)}</td>
+                        {medicos.map((medico: interfMedico) => (
+                            <tr key={medico.id}>
+                                <td width="10%" className="text-center">{medico.id}</td>
+                                <td width="30%">{medico.nome}</td>
+                                <td width="20%">{medico.especialidade}</td>
+                                <td width="10%">{medico.clinicaId}</td>
+                                <td width="15%" className="text-center">{getStatus(medico.status)}</td>
                                 <td width="15%">
                                     <button type="button" className="btn btn-primary btn-sm m-1"
                                     onClick={() => {
-                                        router.push(`/usuario/${usuario.id}`)
+                                        router.push(`/medico/${medico.id}`)
                                     }}
                                     ><BsPencil/></button>
                                        <button
@@ -157,7 +148,7 @@ export default function Usuario(props: interfProps) {
                                                     cancelButtonText: 'Cancelar'
                                                 }).then((result) => {
                                                     if (result.isConfirmed) {
-                                                        deleteUser(usuario.id);
+                                                        deleteMedico(medico.id);
                                                     }
                                                 })
                                             }}>

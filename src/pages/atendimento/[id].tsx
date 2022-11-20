@@ -8,13 +8,13 @@ import api from "../../services/request";
 import { validaPermissao } from "../../services/validaPermissao";
 import { BsCheckLg, BsXLg } from "react-icons/bs";
 import Swal from "sweetalert2";
-import cep from 'cep-promise'
+import cep from 'cep-promise';
 
 interface interfProps {
     token?: string;
 }
 
-export default function Usuario(props: interfProps) {
+export default function Atendimento(props: interfProps) {
 
     const router = useRouter();
 
@@ -39,13 +39,13 @@ export default function Usuario(props: interfProps) {
             }
 
 
-            api.put(`/pessoas/${id}`, obj, {
+            api.put(`/Atendimentos/${id}`, obj, {
                 headers: {
                     'Authorization': `Bearer ${props.token}`
                 }
             })
             .then(() => {
-                router.push('/usuario');
+                router.push('/atendimento');
             })
             .catch((erro) => {
                 console.log(erro);
@@ -62,18 +62,18 @@ export default function Usuario(props: interfProps) {
         if(Number.isInteger(idParam)) {
             setEstaEditando(true);
 
-            api.get('/pessoas/'+idParam, {
+            api.get('/Atendimentos/'+idParam, {
                 headers: {
                     'Authorization': `Bearer ${props.token}`
                 }
             }).then((res) => {
                 //Aqui dá pra fazer uma mensagem se res.data.status === "Token is Expired"
                 if(res.data) {
-                    refForm.current['nome'].value = res.data.nome;
-                    refForm.current['email'].value = res.data.email;
-                    refForm.current['tipo_Usuario'].value = res.data.tipo_Usuario;
-                    refForm.current['status'].selectedIndex = res.data?.status === 'Ativo' ? 0 : 1;
-
+                    refForm.current['clienteId'].value = res.data.clienteId;
+                    refForm.current['medicoId'].value = res.data.medicoId;
+                    refForm.current['tipo_Atendimento'].value = res.data.tipo_Atendimento;
+                    refForm.current['data_Atendimento'].value = res.data.data_Atendimento;
+                    refForm.current['observacao'].value = res.data.observacao;
                 }
 
             }).catch((erro) => {
@@ -102,8 +102,9 @@ export default function Usuario(props: interfProps) {
             obj.status = obj.status === '1' ? true : false;
 
             if(obj.id === 'novo') {
+                //Remove id
                 delete obj.id;
-                api.post('/Usuarios/', obj, {
+                api.post('/Atendimentos/', obj, {
                     headers: {
                         'Authorization': `Bearer ${props.token}`
                     }
@@ -116,14 +117,14 @@ export default function Usuario(props: interfProps) {
                         res.data.message,
                         'success'
                     )
-                    router.push('/usuario');
+                    router.push('/atendimento');
     
                 }).catch((erro) => {
                     console.log(erro);
                 });
             } else {
                 obj.id = Number(obj.id);
-                api.put('/Usuarios/'+obj.id, obj, {
+                api.put('/Atendimentos/'+obj.id, obj, {
                     headers: {
                         'Authorization': `Bearer ${props.token}`
                     }
@@ -135,13 +136,12 @@ export default function Usuario(props: interfProps) {
                         res.data.message,
                         'success'
                     )
-                    router.push('/usuario');
+                    router.push('/atendimento');
 
                 }).catch((erro) => {
                     console.log(erro);
                 });
             }
-
 
 
         } else {
@@ -152,14 +152,14 @@ export default function Usuario(props: interfProps) {
     return (
         <>
         <Head>
-            <title>{estaEditando ? 'Editar' : 'Cadastrar'} Usuário</title>
+            <title>{estaEditando ? 'Editar' : 'Novo'} Atendimento</title>
         </Head>
             <Menu
-                active='usuario'
+                active='atendimento'
                 token={props.token}
             >
-                                                <div className="bg-light mt-4 p-3 shadow-lg rounded">
-                <h3 className="pt-4 text-center">{estaEditando ? 'Editar' : 'Cadastrar'} Usuário</h3>
+                <div className="bg-light mt-4 p-3 shadow-lg rounded">
+                <h3 className="pt-4 text-center">{estaEditando ? 'Editar' : 'Novo'} Atendimento</h3>
 
                 <form
                     className='row g-3 needs-validation pt-2 m-4'
@@ -180,13 +180,13 @@ export default function Usuario(props: interfProps) {
                         </div>
                         </div>
                     <div
-                        className='col-md-8'
+                        className='col-md-6'
                     >
                         <label
-                            htmlFor='nome'
+                            htmlFor='clienteId'
                             className='form-label'
                         >
-                            Nome:
+                            Cliente:
                         </label>
                         <div
                             className='input-group has-validation'
@@ -194,95 +194,124 @@ export default function Usuario(props: interfProps) {
                             <input
                                 type='text'
                                 className='form-control'
-                                placeholder='Digite o nome'
-                                id="nome"
-                                required
+                                placeholder='Informe o Cliente'
+                                id="clienteId"  list="clientes" required
+                                
                             />
+                            {/* <datalist id="clientes">
+                                {clientes.map((cliente) => {
+                                    return (
+                                        <option value={cliente.id}>{cliente.nome}</option>
+                                    )
+                                }
+                                )}
+                            </datalist> */}
                             <div className='invalid-feedback'>
-                                Por favor, digite seu nome.
+                                Por favor, informe o cliente.
                             </div>
                         </div>
                     </div>
                     <div
-                        className='col-md-4'
+                        className='col-md-6'
                     >
                         <label
-                            htmlFor='tipo_Usuario'
+                            htmlFor='medicoId'
                             className='form-label'
                         >
-                            Tipo
+                            Médico:
                         </label>
                         <div
                             className='input-group has-validation'
                         >
-                            <select required className="form-select" defaultValue={""} id='tipo_Usuario'>
-                                <option value={""} disabled>Selecione o tipo</option>
-                                <option value="administrador">Administrador</option>
-                                <option value="atendente">Atendente</option>
-                                <option value="enfermeiro">Enfermeiro</option>
+                            <input
+                                type='text'
+                                className='form-control'
+                                placeholder='Informe o Médico'
+                                id="medicoId"  list="medicos" required
+                            />
+                            {/* <datalist id="medicos">
+                                {medicos.map((medico) => {
+                                    return (
+                                        <option value={medico.id}>{medico.nome}</option>
+                                    )
+                                }
+                                )}
+                            </datalist> */}
+                            <div className='invalid-feedback'>
+                                Por favor, selecione o médico.
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        className='col-md-6'
+                    >
+                        <label
+                            htmlFor='tipo_Atendimento'
+                            className='form-label'
+                        >
+                            Tipo de Atendimento:
+                        </label>
+                        <div
+                            className='input-group has-validation'
+                        >
+                            <select
+                                className='form-select'
+                                id='tipo_Atendimento'
+                                required
+                            >
+                                <option value=''>Selecione</option>
+                                <option value='Consulta'>Consulta</option>
+                                <option value='Exame'>Exame</option>
                             </select>
                             <div className='invalid-feedback'>
-                                Por favor, selecione o tipo.
+                                Por favor, informe o tipo de Atendimento.
                             </div>
                         </div>
                     </div>
                     <div
-                        className='col-md-5'
+                        className='col-md-6'
                     >
                         <label
-                            htmlFor='email'
+                            htmlFor='data_Atendimento'
                             className='form-label'
                         >
-                            Email:
+                            Data do Atendimento:
                         </label>
                         <div
                             className='input-group has-validation'
                         >
-                            <span
-                                className='input-group-text'
-                            >@</span>
                             <input
-                                type='email'
+                                type='date'
                                 className='form-control'
-                                placeholder='Informe o email'
-                                id="email"
-                                required
+                                id="data_Atendimento"
+                                // required
                             />
                             <div className='invalid-feedback'>
-                                Por favor, informe seu email.
+                                Por favor, informe a data do atendimento.
                             </div>
                         </div>
                     </div>
+
                     <div
-                        className='col-md-4'
+                        className='col-md-12'
                     >
                         <label
-                            htmlFor='senha'
+                            htmlFor='observacao'
                             className='form-label'
                         >
-                            Senha:
+                            Observação:
                         </label>
-                        <input
-                            type="password"
-                            className='form-control'
-                            placeholder='Digite sua senha'
-                            id='senha'
-                            required={!estaEditando}
-                        />
-                        <div className='invalid-feedback'>
-                            Por favor, digite sua senha.
-                        </div>
-                    </div>
-                    <div className='col-md-3'>
-                        <label
-                        htmlFor='status' className="form-label">Status:</label>
-                        <select className="form-select" defaultValue={""} id='status' required>
-                            <option value={""} >Selecione o status</option>
-                            <option value="1">Ativo</option>
-                            <option value="0">Inativo</option>
-                        </select>
-                        <div className='invalid-feedback'>
-                            Por favor, selecione o status.
+                        <div
+                            className='input-group has-validation'
+                        >
+                            <textarea
+                                className='form-control'
+                                id='observacao'
+                                required
+                            ></textarea>
+                            <div className='invalid-feedback'>
+                                Por favor, informe alguma observação.
+                            </div>
                         </div>
                     </div>
                     <div
@@ -295,7 +324,7 @@ export default function Usuario(props: interfProps) {
                         type='button'
                         className='btn btn-secondary m-1'
                         onClick={() => {
-                            router.push('/usuario')
+                            router.push('/atendimento')
                         }
                         }
                     >
@@ -314,14 +343,14 @@ export default function Usuario(props: interfProps) {
                         }
                         }
                         >
-                           <BsCheckLg/> Enviar
+                           <BsCheckLg/> Salvar
                         </button>
                         </div>
                     </div>
                     </div>
                 </form>
-
                 </div>
+
             </Menu>
 
         </>

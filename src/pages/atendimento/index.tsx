@@ -4,39 +4,40 @@ import { GetServerSideProps } from "next";
 import { parseCookies } from 'nookies';
 import { validaPermissao } from '../../services/validaPermissao';
 import { useContext, useEffect, useState } from 'react';
-import { UsuariosContext } from '../../contexts/ListaUsuarioContext';
+// import { ClientesContext } from '../../contexts/ListaUsuarioContext';
 import { useRouter } from 'next/router';
 import api from '../../services/request';
 import Swal from "sweetalert2";
-import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheckLg } from 'react-icons/bs';
+import { BsTrash, BsPencil, BsGear, BsHash, BsPlusLg, BsShieldX,  BsClipboardPlus,  BsCheckLg,  BsPhone, BsCreditCard2Front } from 'react-icons/bs';
 
 interface interfProps {
     token?: string;
 }
 
-interface interfUsuario {
+interface interfAtendimento {
     id: number;
-    nome: string;
-    email: string;
-    tipo_Usuario: string;
-    status?: string;
+    clienteId: number;
+    medicoId: number;
+    tipo_Atendimento: string;
+    data_Atendimento: string;
+    observacao: string;
+
 }
 
-
-export default function Usuario(props: interfProps) {
+export default function Atendimento(props: interfProps) {
     const router = useRouter();
 
-    const [usuarios, setUsuarios] = useState<Array<interfUsuario>>([]);
+    const [atendimentos, setAtendimentos] = useState<Array<interfAtendimento>>([]);
 
-    function deleteUser(id: number) {
-        api.delete(`/Usuarios/${id}`, {
+    function deleteAtendimento(id: number) {
+        api.delete(`/Atendimentos/${id}`, {
             headers: {
                 Authorization: "Bearer " + props.token,
             },
         })
             .then((res) => {
-                findUser();
-                Swal.fire(
+                findAtendimeto();
+            Swal.fire(
                     'Deletado com Sucesso!',
                     'Click em OK!',
                     'success')
@@ -46,8 +47,8 @@ export default function Usuario(props: interfProps) {
             });
     }
 
-    function findUser() {
-        api.get("/Usuarios", {
+    function findAtendimeto() {
+        api.get("/Atendimentos", {
             headers: {
                 Authorization: "Bearer " + props.token,
             },
@@ -65,22 +66,12 @@ export default function Usuario(props: interfProps) {
                     }
                     );
                 } else {
-                  setUsuarios(res.data);
+                  setAtendimentos(res.data);
                 }
             })
             .catch((erro) => {
                 console.log(erro);
             });
-    }
-
-    function getTipo(tipo){
-        if (tipo === 'administrador') {
-            return <span className="badge bg-success"><BsShieldCheck/> Administrador</span>
-        } else if (tipo === 'atendente') {
-            return <span className="badge bg-warning"><BsShieldX/> Atendente</span>
-        } else if (tipo === 'enfermeiro') {
-            return <span className="badge bg-primary"><BsPeopleFill/> Enfermeiro</span>
-        }
     }
 
     function getStatus(status){
@@ -92,28 +83,30 @@ export default function Usuario(props: interfProps) {
     }
 
     useEffect(() => {
-        findUser();
+        findAtendimeto();
     }, []);
     return(
         <>
+
             <Head>
-                <title>Usuários</title>
+                <title>Atendimentos</title>
             </Head>
 
             <Menu
-                active='usuario'
+                active='cliente'
                 token={props.token}
             >
-                                <div className="bg-light mt-4 p-3 shadow-lg rounded">
+                        <div className="bg-light mt-4 p-3 shadow-lg rounded">
                 <>
                     <div
                         className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
                     >
-                        <h2><BsFillPersonFill/> Usuários Cadastrados</h2>
+                        <h3>
+                            <BsClipboardPlus/> Atendimentos Realizados</h3>
                         <div
                             className="btn-toolbar mb-2 mb-md-0"
                         >
-                            <button type="button" onClick={() => router.push('/usuario/novo')}
+                            <button type="button" onClick={() => router.push('/atendimento/novo')}
                             className="btn btn-success"><BsPlusLg/> Adicionar</button>
                         </div>
                     </div>
@@ -122,25 +115,25 @@ export default function Usuario(props: interfProps) {
                     <thead>
                         <tr>
                             <th><BsHash/> ID</th>
-                            <th><BsFillPersonFill/> Nome</th>
-                            <th><BsMailbox/> E-mail</th>
-                            <th><BsShieldFill/> Tipo</th>
-                            <th><BsCheckLg/> Status</th>
+                            <th><BsClipboardPlus/> Cliente</th> 
+                            <th><BsCreditCard2Front/> Médico</th> 
+                            <th><BsPhone/> Tipo</th>
+                            <th><BsCheckLg/> Data</th>
                             <th><BsGear/> Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {usuarios.map((usuario: interfUsuario) => (
-                            <tr key={usuario.id}>
-                                <td width="10%" className="text-center">{usuario.id}</td>
-                                <td width="30%">{usuario.nome}</td>
-                                <td width="20%">{usuario.email}</td>
-                                <td width="10%">{getTipo(usuario.tipo_Usuario)}</td>
-                                <td width="15%" className="text-center">{getStatus(usuario.status)}</td>
+                        {atendimentos.map((atendimento: interfAtendimento) => (
+                            <tr key={atendimento.id}>
+                                <td width="10%" className="text-center">{atendimento.id}</td>
+                                <td width="30%">{atendimento.clienteId}</td>
+                                <td width="20%">{atendimento.medicoId}</td>
+                                <td width="10%">{atendimento.tipo_Atendimento}</td>
+                                <td width="15%" className="text-center">{atendimento.data_Atendimento}</td>
                                 <td width="15%">
                                     <button type="button" className="btn btn-primary btn-sm m-1"
                                     onClick={() => {
-                                        router.push(`/usuario/${usuario.id}`)
+                                        router.push(`/atendimento/${atendimento.id}`)
                                     }}
                                     ><BsPencil/></button>
                                        <button
@@ -157,7 +150,7 @@ export default function Usuario(props: interfProps) {
                                                     cancelButtonText: 'Cancelar'
                                                 }).then((result) => {
                                                     if (result.isConfirmed) {
-                                                        deleteUser(usuario.id);
+                                                        deleteAtendimento(atendimento.id);
                                                     }
                                                 })
                                             }}>

@@ -14,13 +14,29 @@ interface interfProps {
     token?: string;
 }
 
-export default function Usuario(props: interfProps) {
+interface interfClinica {
+    id: number;
+    nome: string;
+    logradouro?: string;
+    bairro?: string;
+    cidade?: string;
+    estado?: string;
+    cep?: string;
+    numero?: string;
+    latitude?: string;
+    longitude?: string;
+    status?: string;
+}
+
+export default function Medico(props: interfProps) {
 
     const router = useRouter();
 
     const refForm = useRef<any>();
 
     const { id } = router.query;
+
+    const [clinicas, setClinicas] = useState<Array<interfClinica>>([]);
 
     const [estaEditando, setEstaEditando] = useState(false);
 
@@ -39,13 +55,13 @@ export default function Usuario(props: interfProps) {
             }
 
 
-            api.put(`/pessoas/${id}`, obj, {
+            api.put(`/Medicos/${id}`, obj, {
                 headers: {
                     'Authorization': `Bearer ${props.token}`
                 }
             })
             .then(() => {
-                router.push('/usuario');
+                router.push('/medico');
             })
             .catch((erro) => {
                 console.log(erro);
@@ -56,13 +72,41 @@ export default function Usuario(props: interfProps) {
         }
     },[]);
 
+    function findClinica() {
+        api.get("/Clinicas", {
+            headers: {
+                Authorization: "Bearer " + props.token,
+            },
+        })
+            .then((res) => {
+                if(res.data.status === "Token is Expired"){
+                    //Adicionar Mensagem de Login Expirado
+                    Swal.fire({
+                        title: 'Token Expirado!',
+                        text: '',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        router.push("/");
+                    }
+                    );
+                } else {
+                  setClinicas(res.data);
+                }
+            })
+            .catch((erro) => {
+                console.log(erro);
+            });
+    }
     useEffect(() => {
         const idParam = Number(id);
+        findClinica();
+
 
         if(Number.isInteger(idParam)) {
             setEstaEditando(true);
 
-            api.get('/pessoas/'+idParam, {
+            api.get('/Medicos/'+idParam, {
                 headers: {
                     'Authorization': `Bearer ${props.token}`
                 }
@@ -70,9 +114,9 @@ export default function Usuario(props: interfProps) {
                 //Aqui dá pra fazer uma mensagem se res.data.status === "Token is Expired"
                 if(res.data) {
                     refForm.current['nome'].value = res.data.nome;
-                    refForm.current['email'].value = res.data.email;
-                    refForm.current['tipo_Usuario'].value = res.data.tipo_Usuario;
-                    refForm.current['status'].selectedIndex = res.data?.status === 'Ativo' ? 0 : 1;
+                    refForm.current['especialidade'].value = res.data.especialidade;
+                    refForm.current['clinicaId'].value = res.data.clinicaId;
+                    refForm.current['status'].selectedIndex = res.data?.status === '1' ? 0 : 1;
 
                 }
 
@@ -102,8 +146,9 @@ export default function Usuario(props: interfProps) {
             obj.status = obj.status === '1' ? true : false;
 
             if(obj.id === 'novo') {
+                //Remove id
                 delete obj.id;
-                api.post('/Usuarios/', obj, {
+                api.post('/Medicos/', obj, {
                     headers: {
                         'Authorization': `Bearer ${props.token}`
                     }
@@ -116,14 +161,14 @@ export default function Usuario(props: interfProps) {
                         res.data.message,
                         'success'
                     )
-                    router.push('/usuario');
+                    router.push('/medico');
     
                 }).catch((erro) => {
                     console.log(erro);
                 });
             } else {
                 obj.id = Number(obj.id);
-                api.put('/Usuarios/'+obj.id, obj, {
+                api.put('/Medicos/'+obj.id, obj, {
                     headers: {
                         'Authorization': `Bearer ${props.token}`
                     }
@@ -135,7 +180,7 @@ export default function Usuario(props: interfProps) {
                         res.data.message,
                         'success'
                     )
-                    router.push('/usuario');
+                    router.push('/medico');
 
                 }).catch((erro) => {
                     console.log(erro);
@@ -143,23 +188,23 @@ export default function Usuario(props: interfProps) {
             }
 
 
-
         } else {
             refForm.current.classList.add('was-validated');
         }
     }, [])
 
+
     return (
         <>
         <Head>
-            <title>{estaEditando ? 'Editar' : 'Cadastrar'} Usuário</title>
+            <title>{estaEditando ? 'Editar' : 'Cadastrar'} Médico</title>
         </Head>
             <Menu
-                active='usuario'
+                active='medico'
                 token={props.token}
             >
-                                                <div className="bg-light mt-4 p-3 shadow-lg rounded">
-                <h3 className="pt-4 text-center">{estaEditando ? 'Editar' : 'Cadastrar'} Usuário</h3>
+                <div className="bg-light mt-4 p-3 shadow-lg rounded">
+                <h3 className="pt-4 text-center">{estaEditando ? 'Editar' : 'Cadastrar'} Médico</h3>
 
                 <form
                     className='row g-3 needs-validation pt-2 m-4'
@@ -180,7 +225,7 @@ export default function Usuario(props: interfProps) {
                         </div>
                         </div>
                     <div
-                        className='col-md-8'
+                        className='col-md-7'
                     >
                         <label
                             htmlFor='nome'
@@ -194,35 +239,12 @@ export default function Usuario(props: interfProps) {
                             <input
                                 type='text'
                                 className='form-control'
-                                placeholder='Digite o nome'
+                                placeholder='Digite o nome do Médico'
                                 id="nome"
                                 required
                             />
                             <div className='invalid-feedback'>
-                                Por favor, digite seu nome.
-                            </div>
-                        </div>
-                    </div>
-                    <div
-                        className='col-md-4'
-                    >
-                        <label
-                            htmlFor='tipo_Usuario'
-                            className='form-label'
-                        >
-                            Tipo
-                        </label>
-                        <div
-                            className='input-group has-validation'
-                        >
-                            <select required className="form-select" defaultValue={""} id='tipo_Usuario'>
-                                <option value={""} disabled>Selecione o tipo</option>
-                                <option value="administrador">Administrador</option>
-                                <option value="atendente">Atendente</option>
-                                <option value="enfermeiro">Enfermeiro</option>
-                            </select>
-                            <div className='invalid-feedback'>
-                                Por favor, selecione o tipo.
+                                Por favor, digit o nome do Médico.
                             </div>
                         </div>
                     </div>
@@ -230,54 +252,63 @@ export default function Usuario(props: interfProps) {
                         className='col-md-5'
                     >
                         <label
-                            htmlFor='email'
+                            htmlFor='especialidade'
                             className='form-label'
                         >
-                            Email:
+                            Especialidade:
                         </label>
                         <div
                             className='input-group has-validation'
                         >
-                            <span
-                                className='input-group-text'
-                            >@</span>
                             <input
-                                type='email'
+                                type='text'
                                 className='form-control'
-                                placeholder='Informe o email'
-                                id="email"
+                                placeholder='Informe a especialidade'
+                                id="especialidade"
                                 required
                             />
                             <div className='invalid-feedback'>
-                                Por favor, informe seu email.
+                                Por favor, informe a especialidade.
                             </div>
                         </div>
                     </div>
                     <div
-                        className='col-md-4'
+                        className='col-md-8'
                     >
                         <label
-                            htmlFor='senha'
+                            htmlFor='clinicaId'
                             className='form-label'
                         >
-                            Senha:
+                            Clínica:
                         </label>
-                        <input
-                            type="password"
-                            className='form-control'
-                            placeholder='Digite sua senha'
-                            id='senha'
-                            required={!estaEditando}
-                        />
-                        <div className='invalid-feedback'>
-                            Por favor, digite sua senha.
+                        <div
+                            className='input-group has-validation'
+                        >
+                            <select
+                                className='form-select'
+                                id='clinicaId'
+                                required
+                            >
+                                <option value=''>Selecione a Clínica</option>
+                                {clinicas.map((clinica) => (
+                                    <option
+                                        key={clinica.id}
+                                        value={clinica.id}
+                                    >
+                                        {clinica.nome}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className='invalid-feedback'>
+                                Por favor, selecione a Clínica.
+                            </div>
                         </div>
                     </div>
-                    <div className='col-md-3'>
+                    <div className='col-md-4'>
                         <label
                         htmlFor='status' className="form-label">Status:</label>
-                        <select className="form-select" defaultValue={""} id='status' required>
-                            <option value={""} >Selecione o status</option>
+                        <select className="form-select" defaultValue="1" id='status' required>
+                            <option value="">Selecione o status</option>
                             <option value="1">Ativo</option>
                             <option value="0">Inativo</option>
                         </select>
@@ -295,7 +326,7 @@ export default function Usuario(props: interfProps) {
                         type='button'
                         className='btn btn-secondary m-1'
                         onClick={() => {
-                            router.push('/usuario')
+                            router.push('/clinica')
                         }
                         }
                     >
@@ -314,14 +345,14 @@ export default function Usuario(props: interfProps) {
                         }
                         }
                         >
-                           <BsCheckLg/> Enviar
+                           <BsCheckLg/> Salvar
                         </button>
                         </div>
                     </div>
                     </div>
                 </form>
-
                 </div>
+
             </Menu>
 
         </>

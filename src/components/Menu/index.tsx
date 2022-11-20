@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ReactNode } from "react"
 import { validaPermissao } from "../../services/validaPermissao";
 import { destroyCookie } from 'nookies'
-import { BsPieChartFill, BsFillPersonFill, BsDoorOpen, BsSearch, BsFillQuestionCircleFill, BsCheck2Circle } from 'react-icons/bs';
+import { BsPieChartFill, BsFillPersonFill, BsDoorOpen, BsSearch, BsFillQuestionCircleFill, BsCheck2Circle, BsHouseFill, BsHouse, BsPerson, BsClipboardCheck } from 'react-icons/bs';
 
 interface InterfProps {
     children: ReactNode;
@@ -25,7 +25,7 @@ export const Menu = ({
                 <a
                     className="navbar-brand col-md-3 col-lg-2 me-0 px-3"
                 >
-                    Angle - Admin
+                  <b>Clínicas - PROLIFE</b>
                 </a>
 
                 <div
@@ -57,7 +57,7 @@ export const Menu = ({
                             className="nav flex-column"
                         >
                             {
-                                validaPermissao(token, ['admin', 'colaborador']) &&
+                                validaPermissao(token, ['administrador', 'atendente']) &&
                                 <li
                                     className="nav-item pt-4"
                                 >
@@ -71,7 +71,7 @@ export const Menu = ({
                                 </li>
                             }
 
-                            {validaPermissao(token, ['admin', 'colaborador']) &&
+                            {validaPermissao(token, ['administrador', 'atendente']) &&
                                 <li
                                     className="nav-item"
                                 >
@@ -85,7 +85,7 @@ export const Menu = ({
                                 </li>
                             }
 
-                            {validaPermissao(token, ['admin', 'colaborador']) &&
+                            {validaPermissao(token, ['administrador', 'atendente']) &&
                                 <li
                                     className="nav-item"
                                 >
@@ -98,7 +98,7 @@ export const Menu = ({
                                     </Link>
                                 </li>
                             }
-                            {validaPermissao(token, ['admin', 'colaborador', 'cliente']) &&
+                            {validaPermissao(token, ['administrador', 'atendente', 'enfermeiro']) &&
                                 <li
                                     className="nav-item"
                                 >
@@ -112,7 +112,63 @@ export const Menu = ({
                                 </li>
                             }
 
-                            {validaPermissao(token, ['admin']) &&
+                        {validaPermissao(token, ['administrador', 'atendente', 'enfermeiro']) &&
+                                <li
+                                    className="nav-item"
+                                >
+                                    <Link href={'/atendimento'}>
+                                        <a
+                                            className={`nav-link ${active === 'atendimento' && 'active'}`}
+                                        >
+                                            <BsClipboardCheck /> Atendimentos 
+                                        </a>
+                                    </Link>
+                                </li>
+                            }
+
+                            {validaPermissao(token, ['administrador', 'atendente', 'enfermeiro']) &&
+                                <li
+                                    className="nav-item"
+                                >
+                                    <Link href={'/cliente'}>
+                                        <a
+                                            className={`nav-link ${active === 'cliente' && 'active'}`}
+                                        >
+                                            <BsPerson /> Clientes 
+                                        </a>
+                                    </Link>
+                                </li>
+                            }
+
+                            {validaPermissao(token, ['administrador', 'atendente', 'enfermeiro']) &&
+                                <li
+                                    className="nav-item"
+                                >
+                                    <Link href={'/medico'}>
+                                        <a
+                                            className={`nav-link ${active === 'medico' && 'active'}`}
+                                        >
+                                            <BsPerson /> Médicos 
+                                        </a>
+                                    </Link>
+                                </li>
+                            }
+
+                            {validaPermissao(token, ['administrador', 'atendente', 'enfermeiro']) &&
+                                <li
+                                    className="nav-item"
+                                >
+                                    <Link href={'/clinica'}>
+                                        <a
+                                            className={`nav-link ${active === 'clinica' && 'active'}`}
+                                        >
+                                            <BsHouse /> Unidades
+                                        </a>
+                                    </Link>
+                                </li>
+                            }
+
+                            {validaPermissao(token, ['administrador']) &&
                                 <li
                                     className="nav-item"
                                 >
@@ -120,7 +176,7 @@ export const Menu = ({
                                         <a
                                             className={`nav-link ${active === 'usuario' && 'active'}`}
                                         >
-                                            <BsFillPersonFill /> Usuário
+                                            <BsFillPersonFill /> Usuários
                                         </a>
                                     </Link>
                                 </li>
