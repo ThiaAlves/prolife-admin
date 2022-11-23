@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ReactNode } from "react"
 import { validaPermissao } from "../../services/validaPermissao";
 import { destroyCookie } from 'nookies'
-import { BsPieChartFill, BsFillPersonFill, BsDoorOpen, BsSearch, BsFillQuestionCircleFill, BsCheck2Circle, BsHouseFill, BsHouse, BsPerson, BsClipboardCheck } from 'react-icons/bs';
+import { BsPieChartFill, BsFillPersonFill, BsDoorOpen, BsSearch, BsFillQuestionCircleFill, BsCheck2Circle, BsHouseFill, BsHouse, BsPerson, BsClipboardCheck, BsPersonBadge, BsPersonCircle, BsPeople, BsPinMap } from 'react-icons/bs';
 
 interface InterfProps {
     children: ReactNode;
@@ -71,7 +71,7 @@ export const Menu = ({
                                 </li>
                             }
 
-                            {validaPermissao(token, ['administrador', 'atendente']) &&
+                            {/* {validaPermissao(token, ['administrador', 'atendente']) &&
                                 <li
                                     className="nav-item"
                                 >
@@ -110,7 +110,7 @@ export const Menu = ({
                                         </a>
                                     </Link>
                                 </li>
-                            }
+                            } */}
 
                         {validaPermissao(token, ['administrador', 'atendente', 'enfermeiro']) &&
                                 <li
@@ -134,7 +134,7 @@ export const Menu = ({
                                         <a
                                             className={`nav-link ${active === 'cliente' && 'active'}`}
                                         >
-                                            <BsPerson /> Clientes 
+                                            <BsPeople /> Clientes 
                                         </a>
                                     </Link>
                                 </li>
@@ -148,7 +148,7 @@ export const Menu = ({
                                         <a
                                             className={`nav-link ${active === 'medico' && 'active'}`}
                                         >
-                                            <BsPerson /> Médicos 
+                                            <BsPersonBadge /> Médicos 
                                         </a>
                                     </Link>
                                 </li>
@@ -162,7 +162,7 @@ export const Menu = ({
                                         <a
                                             className={`nav-link ${active === 'clinica' && 'active'}`}
                                         >
-                                            <BsHouse /> Unidades
+                                            <BsPinMap /> Unidades
                                         </a>
                                     </Link>
                                 </li>
@@ -176,7 +176,7 @@ export const Menu = ({
                                         <a
                                             className={`nav-link ${active === 'usuario' && 'active'}`}
                                         >
-                                            <BsFillPersonFill /> Usuários
+                                            <BsPersonCircle /> Usuários
                                         </a>
                                     </Link>
                                 </li>

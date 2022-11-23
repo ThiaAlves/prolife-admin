@@ -39,7 +39,7 @@ export default function Usuario(props: interfProps) {
             }
 
 
-            api.put(`/pessoas/${id}`, obj, {
+            api.put(`/Usuario/${id}`, obj, {
                 headers: {
                     'Authorization': `Bearer ${props.token}`
                 }
@@ -62,7 +62,7 @@ export default function Usuario(props: interfProps) {
         if(Number.isInteger(idParam)) {
             setEstaEditando(true);
 
-            api.get('/pessoas/'+idParam, {
+            api.get('/Usuarios/'+idParam, {
                 headers: {
                     'Authorization': `Bearer ${props.token}`
                 }

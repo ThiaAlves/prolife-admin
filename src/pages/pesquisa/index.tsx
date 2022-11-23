@@ -195,7 +195,7 @@ export const getServerSideProps: GetServerSideProps = async (contexto) => {
     }
 
     const temPermissaoPage = validaPermissao(
-        token, ['admin']
+        token, ['administrador']
     )
 
     if (!temPermissaoPage) {

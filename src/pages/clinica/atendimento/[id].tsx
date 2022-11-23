@@ -1,12 +1,12 @@
 import Head from 'next/head';
-import { Menu } from "../../components/Menu";
+import { Menu } from "../../../components/Menu";
 import { GetServerSideProps } from "next";
 import { parseCookies } from 'nookies';
-import { validaPermissao } from '../../services/validaPermissao';
-import { useContext, useEffect, useState } from 'react';
+import { validaPermissao } from '../../../services/validaPermissao';
+import { useContext, useEffect, useState, useRef } from 'react';
 // import { ClientesContext } from '../../contexts/ListaUsuarioContext';
 import { useRouter } from 'next/router';
-import api from '../../services/request';
+import api from '../../../services/request';
 import Swal from "sweetalert2";
 import { BsTrash, BsPencil, BsGear, BsHash, BsPlusLg, BsShieldX,  BsClipboardPlus,  BsCheckLg,  BsPhone, BsCreditCard2Front } from 'react-icons/bs';
 
@@ -17,17 +17,7 @@ interface interfProps {
 interface interfAtendimento {
     id: number;
     clienteId: number;
-    cliente: {
-        nome: string;
-    }
     medicoId: number;
-    medico: {
-        nome: string;
-    }
-    clinicaId: number;
-    clinica: {
-        nome: string;
-    }
     tipo_Atendimento: string;
     data_Atendimento: string;
     observacao: string;
@@ -36,6 +26,10 @@ interface interfAtendimento {
 
 export default function Atendimento(props: interfProps) {
     const router = useRouter();
+
+    const refForm = useRef<any>();
+
+    const { id } = router.query;
 
     const [atendimentos, setAtendimentos] = useState<Array<interfAtendimento>>([]);
 
@@ -58,7 +52,7 @@ export default function Atendimento(props: interfProps) {
     }
 
     function findAtendimeto() {
-        api.get("/Atendimentos", {
+        api.get(`/Atendimentos/GetAtendimentosByClinica/${id}`, {
             headers: {
                 Authorization: "Bearer " + props.token,
             },
@@ -76,7 +70,6 @@ export default function Atendimento(props: interfProps) {
                     }
                     );
                 } else {
-                    console.log(res.data);
                   setAtendimentos(res.data);
                 }
             })
@@ -113,7 +106,7 @@ export default function Atendimento(props: interfProps) {
                         className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
                     >
                         <h3>
-                            <BsClipboardPlus/> Atendimentos Realizados</h3>
+                            <BsClipboardPlus/> Atendimentos Realizados </h3>
                         <div
                             className="btn-toolbar mb-2 mb-md-0"
                         >
@@ -137,16 +130,10 @@ export default function Atendimento(props: interfProps) {
                         {atendimentos.map((atendimento: interfAtendimento) => (
                             <tr key={atendimento.id}>
                                 <td width="10%" className="text-center">{atendimento.id}</td>
-                                <td width="30%">{atendimento.cliente.nome}</td>
-                                <td width="20%">{atendimento.medico.nome}</td>
+                                <td width="30%">{atendimento.clienteId}</td>
+                                <td width="20%">{atendimento.medicoId}</td>
                                 <td width="10%">{atendimento.tipo_Atendimento}</td>
-                                <td width="15%" className="text-center">{
-                                    new Date(atendimento.data_Atendimento).toLocaleDateString('pt-BR', {
-                                        day: '2-digit',
-                                        month: '2-digit',
-                                        year: 'numeric'
-                                    }) 
-                                }</td>
+                                <td width="15%" className="text-center">{atendimento.data_Atendimento}</td>
                                 <td width="15%">
                                     <button type="button" className="btn btn-primary btn-sm m-1"
                                     onClick={() => {

@@ -1,46 +1,48 @@
 import Head from 'next/head';
-import { Menu } from "../../components/Menu";
+import { Menu } from "../../../components/Menu";
 import { GetServerSideProps } from "next";
 import { parseCookies } from 'nookies';
-import { validaPermissao } from '../../services/validaPermissao';
-import { useContext, useEffect, useState } from 'react';
+import { validaPermissao } from '../../../services/validaPermissao';
+import { useContext, useEffect, useState, useRef } from 'react';
 // import { ClinicasContext } from '../../contexts/ListaUsuarioContext';
 import { useRouter } from 'next/router';
-import api from '../../services/request';
+import api from '../../../services/request';
 import Swal from "sweetalert2";
-import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheck, BsCloudSun, BsClipboardPlus, BsMap, BsMapFill, BsCheckLg, BsHouseFill, BsFillHouseFill, BsFillHouseDoorFill, BsJournalMedical, BsFillPinMapFill, BsFillPersonBadgeFill } from 'react-icons/bs';
+import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheck, BsCloudSun, BsClipboardPlus, BsMap, BsMapFill, BsCheckLg, BsFillStarFill } from 'react-icons/bs';
 
 interface interfProps {
     token?: string;
 }
 
-interface interfClinica {
+interface interfMedico {
     id: number;
     nome: string;
-    logradouro?: string;
-    bairro?: string;
-    cidade?: string;
-    estado?: string;
-    cep?: string;
-    numero?: string;
-    latitude?: string;
-    longitude?: string;
+    especialidade: string;
+    clinicaId: number;
+    clinica: {
+        id: number;
+        nome: string;
+    }
     status?: string;
 }
 
-export default function Clinica(props: interfProps) {
+export default function Medico(props: interfProps) {
     const router = useRouter();
 
-    const [clinicas, setClinicas] = useState<Array<interfClinica>>([]);
+    const refForm = useRef<any>();
 
-    function deleteClinica(id: number) {
-        api.delete(`/Clinicas/${id}`, {
+    const { id } = router.query;
+
+    const [medicos, setMedicos] = useState<Array<interfMedico>>([]);
+
+    function deleteMedico(id: number) {
+        api.delete(`/Medicos/${id}`, {
             headers: {
                 Authorization: "Bearer " + props.token,
             },
         })
             .then((res) => {
-                findClinica();
+                findMedico();
             Swal.fire(
                     'Deletado com Sucesso!',
                     'Click em OK!',
@@ -51,8 +53,8 @@ export default function Clinica(props: interfProps) {
             });
     }
 
-    function findClinica() {
-        api.get("/Clinicas", {
+    function findMedico() {
+        api.get(`/Medicos/GetMedicosByClinica/${id}`, {
             headers: {
                 Authorization: "Bearer " + props.token,
             },
@@ -70,7 +72,8 @@ export default function Clinica(props: interfProps) {
                     }
                     );
                 } else {
-                  setClinicas(res.data);
+                  console.log(res.data);
+                  setMedicos(res.data);
                 }
             })
             .catch((erro) => {
@@ -80,69 +83,66 @@ export default function Clinica(props: interfProps) {
 
     function getStatus(status){
         if (status === true) {
-            return <span className="badge bg-success"><BsCheckLg/></span>
+            return <span className="badge bg-success"><BsCheckLg/> Ativo</span>
         } else {
-            return <span className="badge bg-danger"><BsShieldX/></span>
+            return <span className="badge bg-danger"><BsShieldX/> Inativo</span>
         }
     }
 
     useEffect(() => {
-        findClinica();
+        findMedico();
     }, []);
     return(
         <>
 
             <Head>
-                <title>Clinicas</title>
+                <title>Médicos</title>
             </Head>
 
             <Menu
                 active='clinica'
                 token={props.token}
             >
+                        <div className="bg-light mt-4 p-3 shadow-lg rounded">
                 <>
                     <div
                         className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
                     >
-                        <h2><BsFillPinMapFill /> Unidades Cadastradas</h2>
+                        <h3>
+                            <BsClipboardPlus/> Médicos Cadastrados na Unidade {'medicos[0]?.clinica.nome'} 
+                            </h3>
                         <div
                             className="btn-toolbar mb-2 mb-md-0"
                         >
-                            <button type="button" onClick={() => router.push('/clinica/novo')}
-                                className="btn btn-success"><BsPlusLg /> Adicionar</button>
+                            <button type="button" onClick={() => router.push('/medico/novo')}
+                            className="btn btn-success"><BsPlusLg/> Adicionar</button>
                         </div>
                     </div>
                 </>
-                <div className="row">
-                    {clinicas.map((clinica: interfClinica) => (
-                        <div className="col-sm-4 p-2" key={clinica.id}>
-                            <div className="card border border-primary shadow-lg w-100 h-100">
-                                <div className="card-body">
-                                    <h5 className="card-title">
-                                        <div className="row">
-                                            <div className="col-12 col-md-8 col-sm-12 col-lg-10">
-                                                {clinica.nome}
-                                            </div>
-                                            <div className="col-12 col-md-3 col-sm-12 col-lg-2">
-                                                {getStatus(clinica.status)}
-                                            </div>
-                                        </div>
-                                    </h5>
-                                    <p className="card-text">{clinica.logradouro} {clinica.numero} - {clinica.cidade}/{clinica.estado}</p>
-                                    <div className="text-center">
-                                        <button type="button" onClick={() => router.push(`/clinica/atendimento/${clinica.id}`)}
-                                            className="btn btn-primary btn-sm m-1"><BsJournalMedical/> Atendimentos</button>
-                                        <button type="button" onClick={() => router.push(`/clinica/medico/${clinica.id}`)}
-                                            className="btn btn-dark btn-sm m-1"><BsFillPersonBadgeFill/> Médicos</button>
-
-                                        <button type="button" className="btn btn-success btn-sm m-1"
-                                            onClick={() => {
-                                                router.push(`/clinica/${clinica.id}`)
-                                            }
-                                            }
-                                        ><BsPencil /></button>
-
-                                        <button
+                <table className="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th><BsHash/> ID</th>
+                            <th><BsClipboardPlus/> Nome</th> 
+                            <th><BsFillStarFill/> Especialidade</th> 
+                            <th><BsCheckLg/> Status</th>
+                            <th><BsGear/> Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {medicos.map((medico: interfMedico) => (
+                            <tr key={medico.id}>
+                                <td width="10%" className="text-center">{medico.id}</td>
+                                <td width="30%">{medico.nome}</td>
+                                <td width="20%">{medico.especialidade}</td>
+                                <td width="15%" className="text-center">{getStatus(medico.status)}</td>
+                                <td width="15%">
+                                    <button type="button" className="btn btn-primary btn-sm m-1"
+                                    onClick={() => {
+                                        router.push(`/medico/${medico.id}`)
+                                    }}
+                                    ><BsPencil/></button>
+                                       <button
                                             className="btn btn-danger btn-sm m-1"
                                             onClick={() => {
                                                 Swal.fire({
@@ -156,18 +156,17 @@ export default function Clinica(props: interfProps) {
                                                     cancelButtonText: 'Cancelar'
                                                 }).then((result) => {
                                                     if (result.isConfirmed) {
-                                                        deleteClinica(clinica.id);
+                                                        deleteMedico(medico.id);
                                                     }
                                                 })
-                                            }}
-                                        >
+                                            }}>
                                             <BsTrash />
                                         </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
                 </div>
             </Menu>
         </>

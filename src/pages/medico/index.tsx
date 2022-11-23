@@ -19,6 +19,10 @@ interface interfMedico {
     nome: string;
     especialidade: string;
     clinicaId: number;
+    clinica: {
+        id: number;
+        nome: string;
+    } 
     status?: string;
 }
 
@@ -115,7 +119,7 @@ export default function Medico(props: interfProps) {
                             <th><BsHash/> ID</th>
                             <th><BsClipboardPlus/> Nome</th> 
                             <th><BsMap/> Especialidade</th> 
-                            <th><BsMapFill/> Clinica</th>
+                            <th><BsMapFill/> Unidade</th>
                             <th><BsCheckLg/> Status</th>
                             <th><BsGear/> Ações</th>
                         </tr>
@@ -126,7 +130,7 @@ export default function Medico(props: interfProps) {
                                 <td width="10%" className="text-center">{medico.id}</td>
                                 <td width="30%">{medico.nome}</td>
                                 <td width="20%">{medico.especialidade}</td>
-                                <td width="10%">{medico.clinicaId}</td>
+                                <td width="10%">{medico.clinica.nome}</td>
                                 <td width="15%" className="text-center">{getStatus(medico.status)}</td>
                                 <td width="15%">
                                     <button type="button" className="btn btn-primary btn-sm m-1"
