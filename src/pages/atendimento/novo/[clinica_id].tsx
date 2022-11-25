@@ -3,14 +3,14 @@ import Head from 'next/head';
 import { useRouter } from "next/router"
 import { parseCookies } from "nookies";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
-import { Menu } from "../../components/Menu";
-import api from "../../services/request";
-import { validaPermissao } from "../../services/validaPermissao";
+import { Menu } from "../../../components/Menu";
+import api from "../../../services/request";
+import { validaPermissao } from "../../../services/validaPermissao";
 import { BsCheckLg, BsPlusCircleFill, BsShieldX, BsXLg } from "react-icons/bs";
 import Swal from "sweetalert2";
 import cep from 'cep-promise';
 import MUIDataTable from "mui-datatables";
-import { Options } from "../../components/Config";
+import { Options } from "../../../components/Config";
 
 interface interfProps {
     token?: string;
@@ -50,13 +50,15 @@ export default function Atendimento(props: interfProps) {
 
     const refForm = useRef<any>();
 
-    const { id } = router.query;
+    const { clinica_id } = router.query;
 
     const options = Options;
 
     const [estaEditando, setEstaEditando] = useState(false);
 
     const [clientes, setClientes] = useState<Array<interfCliente>>([]);
+
+    const [clinica_nome, setClinica_nome] = useState("");
 
     const [medicos, setMedicos] = useState<Array<interfMedico>>([]);
 
@@ -76,41 +78,64 @@ export default function Atendimento(props: interfProps) {
 
             }
 
-            api.put(`/Atendimentos/${id}`, obj, {
-                headers: {
-                    'Authorization': `Bearer ${props.token}`
-                }
-            })
-            .then(() => {
-                router.push('/atendimento');
-            })
-            .catch((erro) => {
-                console.log(erro);
-            })
+            // api.put(`/Atendimentos/${id}`, obj, {
+            //     headers: {
+            //         'Authorization': `Bearer ${props.token}`
+            //     }
+            // })
+            // .then(() => {
+            //     router.push('/atendimento');
+            // })
+            // .catch((erro) => {
+            //     console.log(erro);
+            // })
 
         } else {
             refForm.current.classList.add('was-validated');
         }
     },[]);
 
+    // useEffect(() => {
+    //     // const idParam = Number(id);
+
+    //     if(Number.isInteger(idParam)) {
+    //         setEstaEditando(true);
+
+    //         api.get('/Atendimentos/'+idParam, {
+    //             headers: {
+    //                 'Authorization': `Bearer ${props.token}`
+    //             }
+    //         }).then((res) => {
+    //             //Aqui dá pra fazer uma mensagem se res.data.status === "Token is Expired"
+    //             if(res.data) {
+    //                 refForm.current['clienteId'].value = res.data.clienteId;
+    //                 refForm.current['medicoId'].value = res.data.medicoId;
+    //                 refForm.current['tipo_Atendimento'].value = res.data.tipo_Atendimento;
+    //                 refForm.current['data_Atendimento'].value = res.data.data_Atendimento;
+    //                 refForm.current['observacao'].value = res.data.observacao;
+    //             }
+
+    //         }).catch((erro) => {
+    //             console.log(erro);
+    //         })
+    //     }
+    // }, [])
+
     useEffect(() => {
-        const idParam = Number(id);
+        const idParam = Number(clinica_id);
 
         if(Number.isInteger(idParam)) {
-            setEstaEditando(true);
+            setEstaEditando(false);
 
-            api.get('/Atendimentos/'+idParam, {
+            api.get('/Clinicas/'+idParam, {
                 headers: {
                     'Authorization': `Bearer ${props.token}`
                 }
             }).then((res) => {
                 //Aqui dá pra fazer uma mensagem se res.data.status === "Token is Expired"
                 if(res.data) {
-                    refForm.current['clienteId'].value = res.data.clienteId;
-                    refForm.current['medicoId'].value = res.data.medicoId;
-                    refForm.current['tipo_Atendimento'].value = res.data.tipo_Atendimento;
-                    refForm.current['data_Atendimento'].value = res.data.data_Atendimento;
-                    refForm.current['observacao'].value = res.data.observacao;
+                    setClinica_nome(res.data.nome);
+                    // refForm.current['clinica_nome'].value = res.data.nome;
                 }
 
             }).catch((erro) => {
@@ -217,13 +242,18 @@ export default function Atendimento(props: interfProps) {
             }
 
             //Formata status
+            obj.id = 'novo';
             obj.status = obj.status === '1' ? true : false;
             delete obj.cliente;
             delete obj.medico;
 
+            console.log(obj);
+
             if(obj.id === 'novo') {
                 //Remove id
                 delete obj.id;
+                obj.clinicaId = clinica_id;
+
                 api.post('/Atendimentos/', obj, {
                     headers: {
                         'Authorization': `Bearer ${props.token}`
@@ -237,7 +267,7 @@ export default function Atendimento(props: interfProps) {
                         res.data.message,
                         'success'
                     )
-                    router.push('/atendimento');
+                    router.push(`/clinica/atendimento/${clinica_id}`);
     
                 }).catch((erro) => {
                     console.log(erro);
@@ -272,14 +302,14 @@ export default function Atendimento(props: interfProps) {
     return (
         <>
         <Head>
-            <title>{estaEditando ? 'Editar' : 'Novo'} Atendimento</title>
+            <title>{estaEditando ? 'Editar' : 'Novo'} Atendimento na {clinica_nome}</title> 
         </Head>
             <Menu
                 active='atendimento'
                 token={props.token}
             >
                 <div className="bg-light mt-4 p-3 shadow-lg rounded">
-                <h3 className="pt-4 text-center">{estaEditando ? 'Editar' : 'Novo'} Atendimento</h3>
+                <h3 className="pt-4 text-center">{estaEditando ? 'Editar' : 'Novo'} Atendimento na {clinica_nome}</h3>
 
                 <form
                     className='row g-3 needs-validation pt-2 m-4'
@@ -287,18 +317,7 @@ export default function Atendimento(props: interfProps) {
                 ref={refForm}
                 >
 
-                    <div className="col-md-12" hidden>
-                        <div className="form-group">
-                            <label htmlFor="id">ID</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="id"
-                                readOnly
-                                value={id}
-                            />
-                        </div>
-                        </div>
+                    
                     <div
                         className='col-md-6'
                     >
@@ -462,7 +481,7 @@ export default function Atendimento(props: interfProps) {
                         type='button'
                         className='btn btn-secondary m-1'
                         onClick={() => {
-                            router.push('/atendimento')
+                            router.push(`/clinica/atendimento/${clinica_id}`)
                         }
                         }
                     >

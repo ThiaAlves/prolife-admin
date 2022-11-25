@@ -8,6 +8,8 @@ import { UsuariosContext } from '../../contexts/ListaUsuarioContext';
 import { useRouter } from 'next/router';
 import api from '../../services/request';
 import Swal from "sweetalert2";
+import { Options } from '../../components/Config';
+import MUIDataTable from "mui-datatables";
 import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheckLg } from 'react-icons/bs';
 
 interface interfProps {
@@ -25,6 +27,9 @@ interface interfUsuario {
 
 export default function Usuario(props: interfProps) {
     const router = useRouter();
+
+    //Recebe options do compoentes\Config\index.tsx
+    const options = Options;
 
     const [usuarios, setUsuarios] = useState<Array<interfUsuario>>([]);
 
@@ -91,61 +96,25 @@ export default function Usuario(props: interfProps) {
         }
     }
 
-    useEffect(() => {
-        findUser();
-    }, []);
-    return(
-        <>
-            <Head>
-                <title>Usuários</title>
-            </Head>
+    const columns = [
+        "Código",
+        "Nome",
+        "Email",
+        "Tipo",
+        "Status",
+        "Ações",
+    ];
 
-            <Menu
-                active='usuario'
-                token={props.token}
-            >
-                                <div className="bg-light mt-4 p-3 shadow-lg rounded">
-                <>
-                    <div
-                        className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
-                    >
-                        <h2><BsFillPersonFill/> Usuários Cadastrados</h2>
-                        <div
-                            className="btn-toolbar mb-2 mb-md-0"
-                        >
-                            <button type="button" onClick={() => router.push('/usuario/novo')}
-                            className="btn btn-success"><BsPlusLg/> Adicionar</button>
-                        </div>
-                    </div>
-                </>
-                <table className="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th><BsHash/> ID</th>
-                            <th><BsFillPersonFill/> Nome</th>
-                            <th><BsMailbox/> E-mail</th>
-                            <th><BsShieldFill/> Tipo</th>
-                            <th><BsCheckLg/> Status</th>
-                            <th><BsGear/> Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {usuarios.map((usuario: interfUsuario) => (
-                            <tr key={usuario.id}>
-                                <td width="10%" className="text-center">{usuario.id}</td>
-                                <td width="30%">{usuario.nome}</td>
-                                <td width="20%">{usuario.email}</td>
-                                <td width="10%">{getTipo(usuario.tipo_Usuario)}</td>
-                                <td width="15%" className="text-center">{getStatus(usuario.status)}</td>
-                                <td width="15%">
-                                    <button type="button" className="btn btn-primary btn-sm m-1"
-                                    onClick={() => {
-                                        router.push(`/usuario/${usuario.id}`)
-                                    }}
-                                    ><BsPencil/></button>
-                                       <button
-                                            className="btn btn-danger btn-sm m-1"
-                                            onClick={() => {
+    const data = usuarios.map((usuario) => {
+        return [
+            usuario.id,
+            usuario.nome,
+            usuario.email,
+            getTipo(usuario.tipo_Usuario),
+            getStatus(usuario.status),
+            <div className="d-flex">
+                <button className="btn btn-primary btn-sm me-1" onClick={() => router.push(`/usuario/${usuario.id}`)}><BsPencil/></button>
+                <button className="btn btn-danger btn-sm" onClick={() => {
                                                 Swal.fire({
                                                     title: 'Deseja excluir?',
                                                     text: "Você não poderá reverter isso!",
@@ -160,14 +129,45 @@ export default function Usuario(props: interfProps) {
                                                         deleteUser(usuario.id);
                                                     }
                                                 })
-                                            }}>
-                                            <BsTrash />
-                                        </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                            }}><BsTrash/></button>
+            </div>
+        ];
+    });
+
+
+    useEffect(() => {
+        findUser();
+    }, []);
+    return(
+        <>
+            <Head>
+                <title>Usuários</title>
+            </Head>
+
+            <Menu
+                active='usuario'
+                token={props.token}
+            >
+                                <div className="p-2">
+                <>
+                    <div
+                        className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
+                    >
+                        <h2><BsFillPersonFill/> Usuários Cadastrados</h2>
+                        <div
+                            className="btn-toolbar mb-2 mb-md-0"
+                        >
+                            <button type="button" onClick={() => router.push('/usuario/novo')}
+                            className="btn btn-success"><BsPlusLg/> Adicionar</button>
+                        </div>
+                    </div>
+                </>
+                <MUIDataTable
+                    title={"Usuários"}
+                    data={data}
+                    columns={columns}
+                    options={options}
+                />
                 </div>
             </Menu>
         </>

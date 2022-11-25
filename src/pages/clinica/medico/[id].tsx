@@ -114,7 +114,7 @@ export default function Medico(props: interfProps) {
                         <div
                             className="btn-toolbar mb-2 mb-md-0"
                         >
-                            <button type="button" onClick={() => router.push('/medico/novo')}
+                            <button type="button" onClick={() => router.push(`/medico/novo/${id}`)}
                             className="btn btn-success"><BsPlusLg/> Adicionar</button>
                         </div>
                     </div>

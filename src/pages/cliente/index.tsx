@@ -5,10 +5,12 @@ import { parseCookies } from 'nookies';
 import { validaPermissao } from '../../services/validaPermissao';
 import { useContext, useEffect, useState } from 'react';
 // import { ClientesContext } from '../../contexts/ListaUsuarioContext';
+import MUIDataTable from "mui-datatables";
 import { useRouter } from 'next/router';
 import api from '../../services/request';
 import Swal from "sweetalert2";
 import { BsTrash, BsPencil, BsGear, BsHash, BsPlusLg, BsShieldX,  BsClipboardPlus,  BsCheckLg,  BsPhone, BsCreditCard2Front } from 'react-icons/bs';
+import { Options } from '../../components/Config';
 
 interface interfProps {
     token?: string;
@@ -32,6 +34,8 @@ interface interfCliente {
 
 export default function Cliente(props: interfProps) {
     const router = useRouter();
+
+    const options = Options;
 
     const [clientes, setClientes] = useState<Array<interfCliente>>([]);
 
@@ -72,6 +76,7 @@ export default function Cliente(props: interfProps) {
                     }
                     );
                 } else {
+                    console.log(res.data);
                   setClientes(res.data);
                 }
             })
@@ -88,55 +93,23 @@ export default function Cliente(props: interfProps) {
         }
     }
 
-    useEffect(() => {
-        findCliente();
-    }, []);
-    return(
-        <>
+    const columns = [
+        "Código",
+        "Nome",
+        "CPF",
+        "Telefone",
+        "Status",
+        "Ações",
+    ];
 
-            <Head>
-                <title>Clientes</title>
-            </Head>
-
-            <Menu
-                active='cliente'
-                token={props.token}
-            >
-                        <div className="bg-light mt-4 p-3 shadow-lg rounded">
-                <>
-                    <div
-                        className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
-                    >
-                        <h3>
-                            <BsClipboardPlus/> Clientes Cadastrados</h3>
-                        <div
-                            className="btn-toolbar mb-2 mb-md-0"
-                        >
-                            <button type="button" onClick={() => router.push('/cliente/novo')}
-                            className="btn btn-success"><BsPlusLg/> Adicionar</button>
-                        </div>
-                    </div>
-                </>
-                <table className="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th><BsHash/> ID</th>
-                            <th><BsClipboardPlus/> Nome</th> 
-                            <th><BsCreditCard2Front/> CPF</th> 
-                            <th><BsPhone/> Telefone</th>
-                            <th><BsCheckLg/> Status</th>
-                            <th><BsGear/> Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {clientes.map((cliente: interfCliente) => (
-                            <tr key={cliente.id}>
-                                <td width="10%" className="text-center">{cliente.id}</td>
-                                <td width="30%">{cliente.nome}</td>
-                                <td width="20%">{cliente.cep}</td>
-                                <td width="10%">{cliente.telefone}</td>
-                                <td width="15%" className="text-center">{getStatus(cliente.status)}</td>
-                                <td width="15%">
+    const data = clientes.map((cliente: interfCliente) => {
+        return [
+            cliente.id,
+            cliente.nome,
+            cliente.cpf,
+            cliente.telefone,
+            getStatus(cliente.status),
+            <div className="d-flex">
                                     <button type="button" className="btn btn-primary btn-sm m-1"
                                     onClick={() => {
                                         router.push(`/cliente/${cliente.id}`)
@@ -162,11 +135,45 @@ export default function Cliente(props: interfProps) {
                                             }}>
                                             <BsTrash />
                                         </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            </div>
+        ];
+    });
+
+    useEffect(() => {
+        findCliente();
+    }, []);
+    return(
+        <>
+
+            <Head>
+                <title>Clientes</title>
+            </Head>
+
+            <Menu
+                active='cliente'
+                token={props.token}
+            >
+                        <div className="p-2">
+                <>
+                    <div
+                        className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
+                    >
+                        <h3>
+                            <BsClipboardPlus/> Clientes Cadastrados</h3>
+                        <div
+                            className="btn-toolbar mb-2 mb-md-0"
+                        >
+                            <button type="button" onClick={() => router.push('/cliente/novo')}
+                            className="btn btn-success"><BsPlusLg/> Adicionar</button>
+                        </div>
+                    </div>
+                </>
+                <MUIDataTable
+                    title={"Médicos"}
+                    data={data}
+                    columns={columns}
+                    options={options}
+                />
                 </div>
             </Menu>
         </>

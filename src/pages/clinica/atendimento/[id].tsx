@@ -17,7 +17,17 @@ interface interfProps {
 interface interfAtendimento {
     id: number;
     clienteId: number;
+    cliente: {
+        nome: string;
+    }
     medicoId: number;
+    medico: {
+        nome: string;
+    }
+    clinicaId: number;
+    clinica: {
+        nome: string;
+    }
     tipo_Atendimento: string;
     data_Atendimento: string;
     observacao: string;
@@ -70,6 +80,7 @@ export default function Atendimento(props: interfProps) {
                     }
                     );
                 } else {
+                    console.log(res.data);
                   setAtendimentos(res.data);
                 }
             })
@@ -84,6 +95,11 @@ export default function Atendimento(props: interfProps) {
         } else {
             return <span className="badge bg-danger"><BsShieldX/> Inativo</span>
         }
+    }
+
+    function formataData(data){
+        var dataFormatada = new Date(data);
+        return dataFormatada.toLocaleDateString();
     }
 
     useEffect(() => {
@@ -106,12 +122,13 @@ export default function Atendimento(props: interfProps) {
                         className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
                     >
                         <h3>
-                            <BsClipboardPlus/> Atendimentos Realizados </h3>
+                            <BsClipboardPlus/> Atendimentos Realizados na {atendimentos[0]?.clinica.nome}
+                            </h3>
                         <div
                             className="btn-toolbar mb-2 mb-md-0"
                         >
-                            <button type="button" onClick={() => router.push('/atendimento/novo')}
-                            className="btn btn-success"><BsPlusLg/> Adicionar</button>
+                            <button type="button" onClick={() => router.push('/atendimento/novo/' + id)}
+                            className="btn btn-success"><BsPlusLg/> Novo Atendimento</button>
                         </div>
                     </div>
                 </>
@@ -130,10 +147,10 @@ export default function Atendimento(props: interfProps) {
                         {atendimentos.map((atendimento: interfAtendimento) => (
                             <tr key={atendimento.id}>
                                 <td width="10%" className="text-center">{atendimento.id}</td>
-                                <td width="30%">{atendimento.clienteId}</td>
-                                <td width="20%">{atendimento.medicoId}</td>
+                                <td width="30%">{atendimento.cliente.nome}</td>
+                                <td width="20%">{atendimento.medico.nome}</td>
                                 <td width="10%">{atendimento.tipo_Atendimento}</td>
-                                <td width="15%" className="text-center">{atendimento.data_Atendimento}</td>
+                                <td width="15%" className="text-center">{formataData(atendimento.data_Atendimento)}</td>
                                 <td width="15%">
                                     <button type="button" className="btn btn-primary btn-sm m-1"
                                     onClick={() => {

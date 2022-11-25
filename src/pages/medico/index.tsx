@@ -8,7 +8,9 @@ import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import api from '../../services/request';
 import Swal from "sweetalert2";
+import MUIDataTable from "mui-datatables";
 import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheck, BsCloudSun, BsClipboardPlus, BsMap, BsMapFill, BsCheckLg } from 'react-icons/bs';
+import { Options } from '../../components/Config';
 
 interface interfProps {
     token?: string;
@@ -28,6 +30,8 @@ interface interfMedico {
 
 export default function Medico(props: interfProps) {
     const router = useRouter();
+
+    const options = Options;
 
     const [medicos, setMedicos] = useState<Array<interfMedico>>([]);
 
@@ -84,56 +88,25 @@ export default function Medico(props: interfProps) {
         }
     }
 
-    useEffect(() => {
-        findMedico();
-    }, []);
-    return(
-        <>
+    const columns = [
+        "Código",
+        "Nome",
+        "Especialidade",
+        "Unidade",
+        "Status",
+        "Ações",
+    ];
 
-            <Head>
-                <title>Médicos</title>
-            </Head>
 
-            <Menu
-                active='medico'
-                token={props.token}
-            >
-                        <div className="bg-light mt-4 p-3 shadow-lg rounded">
-                <>
-                    <div
-                        className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
-                    >
-                        <h3>
-                            <BsClipboardPlus/> Médicos Cadastrados</h3>
-                        <div
-                            className="btn-toolbar mb-2 mb-md-0"
-                        >
-                            <button type="button" onClick={() => router.push('/medico/novo')}
-                            className="btn btn-success"><BsPlusLg/> Adicionar</button>
-                        </div>
-                    </div>
-                </>
-                <table className="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th><BsHash/> ID</th>
-                            <th><BsClipboardPlus/> Nome</th> 
-                            <th><BsMap/> Especialidade</th> 
-                            <th><BsMapFill/> Unidade</th>
-                            <th><BsCheckLg/> Status</th>
-                            <th><BsGear/> Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {medicos.map((medico: interfMedico) => (
-                            <tr key={medico.id}>
-                                <td width="10%" className="text-center">{medico.id}</td>
-                                <td width="30%">{medico.nome}</td>
-                                <td width="20%">{medico.especialidade}</td>
-                                <td width="10%">{medico.clinica.nome}</td>
-                                <td width="15%" className="text-center">{getStatus(medico.status)}</td>
-                                <td width="15%">
-                                    <button type="button" className="btn btn-primary btn-sm m-1"
+    const data = medicos.map((medico: interfMedico) => {
+        return [
+            medico.id,
+            medico.nome,
+            medico.especialidade,
+            medico.clinica.nome,
+            getStatus(medico.status),
+            <div className="d-flex">
+                                                    <button type="button" className="btn btn-primary btn-sm m-1"
                                     onClick={() => {
                                         router.push(`/medico/${medico.id}`)
                                     }}
@@ -158,11 +131,46 @@ export default function Medico(props: interfProps) {
                                             }}>
                                             <BsTrash />
                                         </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            </div>
+        ];
+    });
+
+    useEffect(() => {
+        findMedico();
+    }, []);
+    return(
+        <>
+
+            <Head>
+                <title>Médicos</title>
+            </Head>
+
+            <Menu
+                active='medico'
+                token={props.token}
+            >
+                        <div className="p-2">
+                <>
+                    <div
+                        className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
+                    >
+                        <h3>
+                            <BsClipboardPlus/> Médicos Cadastrados</h3>
+                        <div
+                            className="btn-toolbar mb-2 mb-md-0"
+                        >
+                            <button type="button" onClick={() => router.push('/medico/novo')}
+                            className="btn btn-success"><BsPlusLg/> Adicionar</button>
+                        </div>
+                    </div>
+                </>
+                <MUIDataTable
+                    title={"Médicos"}
+                    data={data}
+                    columns={columns}
+                    options={options}
+                />
+
                 </div>
             </Menu>
         </>

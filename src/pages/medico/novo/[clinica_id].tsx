@@ -3,9 +3,9 @@ import Head from 'next/head';
 import { useRouter } from "next/router"
 import { parseCookies } from "nookies";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
-import { Menu } from "../../components/Menu";
-import api from "../../services/request";
-import { validaPermissao } from "../../services/validaPermissao";
+import { Menu } from "../../../components/Menu";
+import api from "../../../services/request";
+import { validaPermissao } from "../../../services/validaPermissao";
 import { BsCheckLg, BsXLg } from "react-icons/bs";
 import Swal from "sweetalert2";
 import cep from 'cep-promise'
@@ -34,9 +34,11 @@ export default function Medico(props: interfProps) {
 
     const refForm = useRef<any>();
 
-    const { id } = router.query;
+    const { clinica_id } = router.query;
 
     const [clinicas, setClinicas] = useState<Array<interfClinica>>([]);
+
+    const [clinica_nome, setClinica_nome] = useState("");
 
     const [estaEditando, setEstaEditando] = useState(false);
 
@@ -53,19 +55,6 @@ export default function Medico(props: interfProps) {
                 if(id === 'botao' || (id === 'senha' && value === '')) break;
                 obj[id] = value;
             }
-
-
-            api.put(`/Medicos/${id}`, obj, {
-                headers: {
-                    'Authorization': `Bearer ${props.token}`
-                }
-            })
-            .then(() => {
-                router.push('/medico');
-            })
-            .catch((erro) => {
-                console.log(erro);
-            })
 
         } else {
             refForm.current.classList.add('was-validated');
@@ -99,25 +88,22 @@ export default function Medico(props: interfProps) {
             });
     }
     useEffect(() => {
-        const idParam = Number(id);
+        const idParam = Number(clinica_id);
         findClinica();
 
 
         if(Number.isInteger(idParam)) {
-            setEstaEditando(true);
+            setEstaEditando(false);
 
-            api.get('/Medicos/'+idParam, {
+            api.get('/Clinicas/'+idParam, {
                 headers: {
                     'Authorization': `Bearer ${props.token}`
                 }
             }).then((res) => {
                 //Aqui dá pra fazer uma mensagem se res.data.status === "Token is Expired"
                 if(res.data) {
-                    refForm.current['nome'].value = res.data.nome;
-                    refForm.current['especialidade'].value = res.data.especialidade;
-                    refForm.current['clinicaId'].value = res.data.clinicaId;
-                    refForm.current['status'].selectedIndex = res.data?.status === '1' ? 0 : 1;
-
+                    setClinica_nome(res.data.nome);
+                    // refForm.current['clinica_nome'].value = res.data.nome;
                 }
 
             }).catch((erro) => {
@@ -143,6 +129,7 @@ export default function Medico(props: interfProps) {
             }
 
             //Formata status
+            obj.id = 'novo';
             obj.status = obj.status === '1' ? true : false;
 
             if(obj.id === 'novo') {
@@ -161,7 +148,7 @@ export default function Medico(props: interfProps) {
                         res.data.message,
                         'success'
                     )
-                    router.push('/medico');
+                    router.push('/clinica/medico/'+clinica_id);
     
                 }).catch((erro) => {
                     console.log(erro);
@@ -180,7 +167,7 @@ export default function Medico(props: interfProps) {
                         res.data.message,
                         'success'
                     )
-                    router.push('/medico');
+                    router.push('/clinica/medico/'+obj.clinica_id);
 
                 }).catch((erro) => {
                     console.log(erro);
@@ -204,7 +191,7 @@ export default function Medico(props: interfProps) {
                 token={props.token}
             >
                 <div className="bg-light mt-4 p-3 shadow-lg rounded">
-                <h3 className="pt-4 text-center">{estaEditando ? 'Editar' : 'Cadastrar'} Médico</h3>
+                <h3 className="pt-4 text-center">{estaEditando ? 'Editar' : 'Cadastrar'} Médico na {clinica_nome}</h3>
 
                 <form
                     className='row g-3 needs-validation pt-2 m-4'
@@ -214,18 +201,18 @@ export default function Medico(props: interfProps) {
 
                     <div className="col-md-6" hidden>
                         <div className="form-group">
-                            <label htmlFor="id">ID</label>
+                            <label htmlFor="className">ID</label>
                             <input
                                 type="text"
                                 className="form-control"
-                                id="id"
+                                id="clinicaId"
                                 readOnly
-                                value={id}
+                                value={clinica_id}
                             />
                         </div>
                         </div>
                     <div
-                        className='col-md-7'
+                        className='col-md-6'
                     >
                         <label
                             htmlFor='nome'
@@ -249,7 +236,7 @@ export default function Medico(props: interfProps) {
                         </div>
                     </div>
                     <div
-                        className='col-md-5'
+                        className='col-md-4'
                     >
                         <label
                             htmlFor='especialidade'
@@ -284,7 +271,7 @@ export default function Medico(props: interfProps) {
                             </div>
                         </div>
                     </div>
-                    <div
+                    {/* <div
                         className='col-md-8'
                     >
                         <label
@@ -315,8 +302,8 @@ export default function Medico(props: interfProps) {
                                 Por favor, selecione a Clínica.
                             </div>
                         </div>
-                    </div>
-                    <div className='col-md-4'>
+                    </div> */}
+                    <div className='col-md-2'>
                         <label
                         htmlFor='status' className="form-label">Status:</label>
                         <select className="form-select" defaultValue="1" id='status' required>
@@ -338,7 +325,7 @@ export default function Medico(props: interfProps) {
                         type='button'
                         className='btn btn-secondary m-1'
                         onClick={() => {
-                            router.push('/clinica')
+                            router.push('/clinica/medico/' + clinica_id);
                         }
                         }
                     >
