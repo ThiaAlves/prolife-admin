@@ -9,7 +9,7 @@ import MUIDataTable from "mui-datatables";
 import { useRouter } from 'next/router';
 import api from '../../services/request';
 import Swal from "sweetalert2";
-import { BsTrash, BsPencil, BsGear, BsHash, BsPlusLg, BsShieldX,  BsClipboardPlus,  BsCheckLg,  BsPhone, BsCreditCard2Front } from 'react-icons/bs';
+import { BsTrash, BsPencil, BsGear, BsHash, BsPlusLg, BsShieldX,  BsClipboardPlus,  BsCheckLg,  BsPhone, BsCreditCard2Front, BsArrowLeft } from 'react-icons/bs';
 import { Options } from '../../components/Config';
 
 interface interfProps {
@@ -174,6 +174,10 @@ export default function Cliente(props: interfProps) {
                     columns={columns}
                     options={options}
                 />
+                <div className="d-flex justify-content-end mb-5 pt-2">
+                    <button type="button" onClick={() => router.back()}
+                        className="btn btn-primary"><BsArrowLeft/> Voltar</button>
+                </div>
                 </div>
             </Menu>
         </>

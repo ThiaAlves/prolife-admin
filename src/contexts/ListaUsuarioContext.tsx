@@ -53,14 +53,14 @@ export function UsuariosProvider({ children }: InterProviderProps) {
             },
         };
 
-        api.get("/pessoas", config).then((res) => {
+        api.get("/Usuarios", config).then((res) => {
             setUsuarios(res.data);
         });
 
     }, [])
 
     async function atualizarUsuarios(data: InterDados) {
-        await api.put('/pessoas', data)
+        await api.put('/Usuarios', data)
         .then((res) => {
             console.log(res)
         })
@@ -68,7 +68,7 @@ export function UsuariosProvider({ children }: InterProviderProps) {
             console.log(err)
         })
 
-        await api.get('/pessoas').then((res) => {
+        await api.get('/Usuarios').then((res) => {
 
             setUsuarios(res.data)
 
@@ -79,7 +79,7 @@ export function UsuariosProvider({ children }: InterProviderProps) {
     async function deletarUsuarios(data: InterDados) {
         const id = data.id ? data.id : null;
 
-        await api.delete(`/pessoas/${id}`)
+        await api.delete(`/Usuarios/${id}`)
         .then((res) => {
             console.log(res)
         })
@@ -87,7 +87,7 @@ export function UsuariosProvider({ children }: InterProviderProps) {
             console.log(err)
         })
 
-        await api.get('/pessoas').then((resposta) => {
+        await api.get('/Usuarios').then((resposta) => {
 
             setUsuarios(resposta.data)
 
@@ -105,12 +105,12 @@ export function UsuariosProvider({ children }: InterProviderProps) {
 
     async function criarUsuarios(data: PropsUsuariosInput) {
 
-        await api.post('/pessoas', data)
+        await api.post('/Usuarios', data)
             .then((res) => {
 
             })
 
-        await api.get('/pessoas').then((resposta) => {
+        await api.get('/Usuarios').then((resposta) => {
             setUsuarios(resposta.data)
 
         })

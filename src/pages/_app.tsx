@@ -5,9 +5,9 @@ import './../styles/styles.css';
 function MyApp({ Component, pageProps }) {
     return (
         <AutenticacaoProvider>
-            <UsuariosProvider>
+            {/* <UsuariosProvider> */}
                 <Component {...pageProps} />
-            </UsuariosProvider>
+            {/* </UsuariosProvider> */}
         </AutenticacaoProvider>
     )
 }

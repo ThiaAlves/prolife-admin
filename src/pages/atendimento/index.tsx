@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import api from '../../services/request';
 import Swal from "sweetalert2";
-import { BsTrash, BsPencil, BsGear, BsHash, BsPlusLg, BsShieldX,  BsClipboardPlus,  BsCheckLg,  BsPhone, BsCreditCard2Front } from 'react-icons/bs';
+import { BsTrash, BsPencil, BsGear, BsHash, BsPlusLg, BsShieldX,  BsClipboardPlus,  BsCheckLg,  BsPhone, BsCreditCard2Front, BsArrowLeft } from 'react-icons/bs';
 
 interface interfProps {
     token?: string;
@@ -117,17 +117,16 @@ export default function Atendimento(props: interfProps) {
                         <div
                             className="btn-toolbar mb-2 mb-md-0"
                         >
-                            <button type="button" onClick={() => router.push('/atendimento/novo')}
-                            className="btn btn-success"><BsPlusLg/> Adicionar</button>
                         </div>
                     </div>
                 </>
                 <table className="table table-striped table-hover">
                     <thead>
                         <tr>
-                            <th><BsHash/> ID</th>
+                            {/* <th><BsHash/> ID</th> */}
                             <th><BsClipboardPlus/> Cliente</th> 
                             <th><BsCreditCard2Front/> Médico</th> 
+                            <th><BsPhone/> Clínica</th>
                             <th><BsPhone/> Tipo</th>
                             <th><BsCheckLg/> Data</th>
                             <th><BsGear/> Ações</th>
@@ -136,9 +135,10 @@ export default function Atendimento(props: interfProps) {
                     <tbody>
                         {atendimentos.map((atendimento: interfAtendimento) => (
                             <tr key={atendimento.id}>
-                                <td width="10%" className="text-center">{atendimento.id}</td>
-                                <td width="30%">{atendimento.cliente.nome}</td>
+                                {/* <td width="10%" className="text-center">{atendimento.id}</td> */}
+                                <td width="20%">{atendimento.cliente.nome}</td>
                                 <td width="20%">{atendimento.medico.nome}</td>
+                                <td width="20%">{atendimento.clinica.nome}</td>
                                 <td width="10%">{atendimento.tipo_Atendimento}</td>
                                 <td width="15%" className="text-center">{
                                     new Date(atendimento.data_Atendimento).toLocaleDateString('pt-BR', {
@@ -178,6 +178,10 @@ export default function Atendimento(props: interfProps) {
                         ))}
                     </tbody>
                 </table>
+                <div className="d-flex justify-content-end">
+                    <button type="button" onClick={() => router.back()}
+                        className="btn btn-primary"><BsArrowLeft/> Voltar</button>
+                </div>
                 </div>
             </Menu>
         </>

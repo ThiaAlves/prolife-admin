@@ -161,7 +161,8 @@ export default function Medico(props: interfProps) {
                         res.data.message,
                         'success'
                     )
-                    router.push('/medico');
+                    router.back();
+
     
                 }).catch((erro) => {
                     console.log(erro);
@@ -180,7 +181,8 @@ export default function Medico(props: interfProps) {
                         res.data.message,
                         'success'
                     )
-                    router.push('/medico');
+                    //Retorna para aonde estava
+                    router.back();
 
                 }).catch((erro) => {
                     console.log(erro);

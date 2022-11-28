@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import api from '../../services/request';
 import Swal from "sweetalert2";
-import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheck, BsCloudSun, BsClipboardPlus, BsMap, BsMapFill, BsCheckLg, BsHouseFill, BsFillHouseFill, BsFillHouseDoorFill, BsJournalMedical, BsFillPinMapFill, BsFillPersonBadgeFill } from 'react-icons/bs';
+import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheck, BsCloudSun, BsClipboardPlus, BsMap, BsMapFill, BsCheckLg, BsHouseFill, BsFillHouseFill, BsFillHouseDoorFill, BsJournalMedical, BsFillPinMapFill, BsFillPersonBadgeFill, BsArrowLeft } from 'react-icons/bs';
 
 interface interfProps {
     token?: string;
@@ -41,7 +41,7 @@ export default function Clinica(props: interfProps) {
         })
             .then((res) => {
                 findClinica();
-            Swal.fire(
+                Swal.fire(
                     'Deletado com Sucesso!',
                     'Click em OK!',
                     'success')
@@ -58,7 +58,7 @@ export default function Clinica(props: interfProps) {
             },
         })
             .then((res) => {
-                if(res.data.status === "Token is Expired"){
+                if (res.data.status === "Token is Expired") {
                     //Adicionar Mensagem de Login Expirado
                     Swal.fire({
                         title: 'Token Expirado!',
@@ -70,7 +70,7 @@ export default function Clinica(props: interfProps) {
                     }
                     );
                 } else {
-                  setClinicas(res.data);
+                    setClinicas(res.data);
                 }
             })
             .catch((erro) => {
@@ -78,18 +78,18 @@ export default function Clinica(props: interfProps) {
             });
     }
 
-    function getStatus(status){
+    function getStatus(status) {
         if (status === true) {
-            return <span className="badge bg-success"><BsCheckLg/></span>
+            return <span className="badge bg-success"><BsCheckLg /></span>
         } else {
-            return <span className="badge bg-danger"><BsShieldX/></span>
+            return <span className="badge bg-danger"><BsShieldX /></span>
         }
     }
 
     useEffect(() => {
         findClinica();
     }, []);
-    return(
+    return (
         <>
 
             <Head>
@@ -131,9 +131,9 @@ export default function Clinica(props: interfProps) {
                                     <p className="card-text">{clinica.logradouro} {clinica.numero} - {clinica.cidade}/{clinica.estado}</p>
                                     <div className="text-center">
                                         <button type="button" onClick={() => router.push(`/clinica/atendimento/${clinica.id}`)}
-                                            className="btn btn-primary btn-sm m-1"><BsJournalMedical/> Atendimentos</button>
+                                            className="btn btn-primary btn-sm m-1"><BsJournalMedical /> Atendimentos</button>
                                         <button type="button" onClick={() => router.push(`/clinica/medico/${clinica.id}`)}
-                                            className="btn btn-dark btn-sm m-1"><BsFillPersonBadgeFill/> Médicos</button>
+                                            className="btn btn-dark btn-sm m-1"><BsFillPersonBadgeFill /> Médicos</button>
 
                                         <button type="button" className="btn btn-success btn-sm m-1"
                                             onClick={() => {
@@ -167,7 +167,12 @@ export default function Clinica(props: interfProps) {
                                 </div>
                             </div>
                         </div>
+
                     ))}
+                    <div className="d-flex justify-content-end">
+                        <button type="button" onClick={() => router.back()}
+                            className="btn btn-primary"><BsArrowLeft /> Voltar</button>
+                    </div>
                 </div>
             </Menu>
         </>
@@ -176,7 +181,7 @@ export default function Clinica(props: interfProps) {
 
 export const getServerSideProps: GetServerSideProps = async (contexto) => {
 
-    const {'painel-token': token} = parseCookies(contexto);
+    const { 'painel-token': token } = parseCookies(contexto);
 
     // console.log(token)
 

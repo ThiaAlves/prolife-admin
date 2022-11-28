@@ -10,7 +10,7 @@ import api from '../../services/request';
 import Swal from "sweetalert2";
 import { Options } from '../../components/Config';
 import MUIDataTable from "mui-datatables";
-import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheckLg } from 'react-icons/bs';
+import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheckLg, BsArrowLeft } from 'react-icons/bs';
 
 interface interfProps {
     token?: string;
@@ -168,6 +168,10 @@ export default function Usuario(props: interfProps) {
                     columns={columns}
                     options={options}
                 />
+                </div>
+                <div className="d-flex justify-content-end mb-5 pt-2">
+                    <button type="button" onClick={() => router.back()}
+                        className="btn btn-primary"><BsArrowLeft/> Voltar</button>
                 </div>
             </Menu>
         </>

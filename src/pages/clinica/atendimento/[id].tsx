@@ -8,7 +8,7 @@ import { useContext, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import api from '../../../services/request';
 import Swal from "sweetalert2";
-import { BsTrash, BsPencil, BsGear, BsHash, BsPlusLg, BsShieldX,  BsClipboardPlus,  BsCheckLg,  BsPhone, BsCreditCard2Front } from 'react-icons/bs';
+import { BsTrash, BsPencil, BsGear, BsHash, BsPlusLg, BsShieldX,  BsClipboardPlus,  BsCheckLg,  BsPhone, BsCreditCard2Front, BsArrowLeft } from 'react-icons/bs';
 
 interface interfProps {
     token?: string;
@@ -42,6 +42,8 @@ export default function Atendimento(props: interfProps) {
     const { id } = router.query;
 
     const [atendimentos, setAtendimentos] = useState<Array<interfAtendimento>>([]);
+
+    const [clinica_nome, setClinica_nome] = useState<string>("");
 
     function deleteAtendimento(id: number) {
         api.delete(`/Atendimentos/${id}`, {
@@ -102,8 +104,25 @@ export default function Atendimento(props: interfProps) {
         return dataFormatada.toLocaleDateString();
     }
 
+    //Busca a Clinica
+    function findClinica() {
+        api.get(`/Clinicas/${id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + props.token,
+            }
+        })
+            .then((res) => {
+                setClinica_nome(res.data.nome);
+            })
+            .catch((erro) => {
+                console.log(erro);
+            });
+    }
+
+
     useEffect(() => {
         findAtendimeto();
+        findClinica();
     }, []);
     return(
         <>
@@ -122,7 +141,7 @@ export default function Atendimento(props: interfProps) {
                         className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
                     >
                         <h3>
-                            <BsClipboardPlus/> Atendimentos Realizados na {atendimentos[0]?.clinica.nome}
+                            <BsClipboardPlus/> Atendimentos Realizados na {clinica_nome}
                             </h3>
                         <div
                             className="btn-toolbar mb-2 mb-md-0"
@@ -182,6 +201,10 @@ export default function Atendimento(props: interfProps) {
                         ))}
                     </tbody>
                 </table>
+                <div className="d-flex justify-content-end">
+                        <button type="button" onClick={() => router.back()}
+                            className="btn btn-primary"><BsArrowLeft /> Voltar</button>
+                    </div>
                 </div>
             </Menu>
         </>

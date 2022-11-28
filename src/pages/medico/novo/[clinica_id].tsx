@@ -271,38 +271,6 @@ export default function Medico(props: interfProps) {
                             </div>
                         </div>
                     </div>
-                    {/* <div
-                        className='col-md-8'
-                    >
-                        <label
-                            htmlFor='clinicaId'
-                            className='form-label'
-                        >
-                            Clínica:
-                        </label>
-                        <div
-                            className='input-group has-validation'
-                        >
-                            <select
-                                className='form-select'
-                                id='clinicaId'
-                                required
-                            >
-                                <option value=''>Selecione a Clínica</option>
-                                {clinicas.map((clinica) => (
-                                    <option
-                                        key={clinica.id}
-                                        value={clinica.id}
-                                    >
-                                        {clinica.nome}
-                                    </option>
-                                ))}
-                            </select>
-                            <div className='invalid-feedback'>
-                                Por favor, selecione a Clínica.
-                            </div>
-                        </div>
-                    </div> */}
                     <div className='col-md-2'>
                         <label
                         htmlFor='status' className="form-label">Status:</label>

@@ -29,29 +29,29 @@ export default function Dashboard(props: interfProps) {
                     </div>
                     <div className="row">
                         <div className="col-md-3 rounded shadow-lg">
-                        <iframe src="http://187.87.223.235:3000/d-solo/B-Wjqp3nk/dashboard-angle?orgId=1&from=1656351616091&to=1656373216091&panelId=2" width="100%" height="100%"></iframe>
+                        <iframe src="http://187.87.223.235:3000/d-solo/Ym3TuXd4k/dashboard-clinicas?orgId=1&from=1669431714947&to=1669453314947&panelId=2"width="100%" height="100%"></iframe>
                         </div>
                         <div className="col-md-3 rounded shadow-lg">
-                        <iframe src="http://187.87.223.235:3000/d-solo/B-Wjqp3nk/dashboard-angle?orgId=1&from=1656352010147&to=1656373610147&panelId=5" width="100%" height="100%"></iframe>
+                        <iframe src="http://187.87.223.235:3000/d-solo/Ym3TuXd4k/dashboard-clinicas?orgId=1&from=1669431764219&to=1669453364219&panelId=3" width="100%" height="100%"></iframe>
                         </div>
                         <div className="col-md-3 rounded shadow-lg">
-                        <iframe src="http://187.87.223.235:3000/d-solo/B-Wjqp3nk/dashboard-angle?orgId=1&from=1656352116675&to=1656373716675&panelId=4" width="100%" height="100%"></iframe>
+                        <iframe src="http://187.87.223.235:3000/d-solo/Ym3TuXd4k/dashboard-clinicas?orgId=1&from=1669431815999&to=1669453415999&panelId=4" width="100%" height="100%"></iframe>
                         </div>
                         <div className="col-md-3 rounded shadow-lg">
-                        <iframe src="http://187.87.223.235:3000/d-solo/B-Wjqp3nk/dashboard-angle?orgId=1&from=1656352165658&to=1656373765658&panelId=3" width="100%" height="100%"></iframe>
+                        <iframe src="http://187.87.223.235:3000/d-solo/Ym3TuXd4k/dashboard-clinicas?orgId=1&from=1669431969388&to=1669453569388&panelId=5" width="100%" height="100%"></iframe>
                         </div>
                     </div>
                     <div className="row pt-3">
                         <div className="col-md-8 rounded shadow-lg">
-                        <iframe src="http://187.87.223.235:3000/d-solo/B-Wjqp3nk/dashboard-angle?orgId=1&from=1656352325841&to=1656373925841&panelId=7" width="100%" height="400px"></iframe>
+                        <iframe src="http://187.87.223.235:3000/d-solo/Ym3TuXd4k/dashboard-clinicas?orgId=1&from=1668849268970&to=1669454068970&panelId=7" width="100%" height="400px"></iframe>
                         </div>
                         <div className="col-md-4 rounded shadow-lg">
-                        <iframe src="http://187.87.223.235:3000/d-solo/B-Wjqp3nk/dashboard-angle?orgId=1&from=1656352362882&to=1656373962882&panelId=9" width="100%" height="400px"></iframe>
+                        <iframe src="http://187.87.223.235:3000/d-solo/Ym3TuXd4k/dashboard-clinicas?orgId=1&from=1668849505672&to=1669454305672&panelId=9" width="100%" height="400px"></iframe>
                             </div>
                     </div>
                     <div className="row pt-3">
                         <div className="col-md-12 rounded shadow-lg">
-                        <iframe src="http://187.87.223.235:3000/d-solo/B-Wjqp3nk/dashboard-angle?orgId=1&from=1656354198122&to=1656375798122&panelId=11" width="100%" height="1000px"></iframe>
+                        <iframe src="http://187.87.223.235:3000/d-solo/Ym3TuXd4k/dashboard-clinicas?orgId=1&from=1668849806236&to=1669454606236&panelId=11" width="100%" height="1000px"></iframe>
                         </div>
                     </div>
                 </>

@@ -3,7 +3,7 @@ networks:
   api_server_default:
     external: false
 services:
-  angler-admin:
+  prolife-admin:
     networks:
       - api_server_default
     build:
@@ -12,4 +12,4 @@ services:
     environment:
       ENV_NAME: dev
     ports:
-      - 80:3000
+      - 80:5001

@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import api from '../../services/request';
 import Swal from "sweetalert2";
 import MUIDataTable from "mui-datatables";
-import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheck, BsCloudSun, BsClipboardPlus, BsMap, BsMapFill, BsCheckLg } from 'react-icons/bs';
+import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheck, BsCloudSun, BsClipboardPlus, BsMap, BsMapFill, BsCheckLg, BsArrowLeft } from 'react-icons/bs';
 import { Options } from '../../components/Config';
 
 interface interfProps {
@@ -171,6 +171,10 @@ export default function Medico(props: interfProps) {
                     options={options}
                 />
 
+                </div>
+                <div className="d-flex justify-content-end mb-5 pt-2">
+                    <button type="button" onClick={() => router.back()}
+                        className="btn btn-primary"><BsArrowLeft/> Voltar</button>
                 </div>
             </Menu>
         </>

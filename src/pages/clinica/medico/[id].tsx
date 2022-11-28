@@ -8,7 +8,7 @@ import { useContext, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import api from '../../../services/request';
 import Swal from "sweetalert2";
-import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheck, BsCloudSun, BsClipboardPlus, BsMap, BsMapFill, BsCheckLg, BsFillStarFill } from 'react-icons/bs';
+import { BsTrash, BsPencil, BsGear, BsMailbox, BsFillPersonFill, BsHash, BsPlusLg, BsShieldX, BsShieldFill, BsShieldCheck, BsPeopleFill, BsQuestionSquare, BsCheck, BsCloudSun, BsClipboardPlus, BsMap, BsMapFill, BsCheckLg, BsFillStarFill, BsArrowLeft } from 'react-icons/bs';
 
 interface interfProps {
     token?: string;
@@ -32,6 +32,8 @@ export default function Medico(props: interfProps) {
     const refForm = useRef<any>();
 
     const { id } = router.query;
+
+    const [clinica_nome, setClinica_nome] = useState<string>("");
 
     const [medicos, setMedicos] = useState<Array<interfMedico>>([]);
 
@@ -89,8 +91,25 @@ export default function Medico(props: interfProps) {
         }
     }
 
+        //Busca a Clinica
+        function findClinica() {
+            api.get(`/Clinicas/${id}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + props.token,
+                }
+            })
+                .then((res) => {
+                    setClinica_nome(res.data.nome);
+                })
+                .catch((erro) => {
+                    console.log(erro);
+                });
+        }
+    
+
     useEffect(() => {
         findMedico();
+        findClinica();
     }, []);
     return(
         <>
@@ -109,7 +128,7 @@ export default function Medico(props: interfProps) {
                         className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 mb-3 border-bottom"
                     >
                         <h3>
-                            <BsClipboardPlus/> Médicos Cadastrados na Unidade {'medicos[0]?.clinica.nome'} 
+                            <BsClipboardPlus/> Médicos Cadastrados na Unidade {clinica_nome} 
                             </h3>
                         <div
                             className="btn-toolbar mb-2 mb-md-0"
@@ -167,6 +186,10 @@ export default function Medico(props: interfProps) {
                         ))}
                     </tbody>
                 </table>
+                <div className="d-flex justify-content-end">
+                    <button type="button" onClick={() => router.back()}
+                        className="btn btn-primary"><BsArrowLeft/> Voltar</button>
+                </div>
                 </div>
             </Menu>
         </>

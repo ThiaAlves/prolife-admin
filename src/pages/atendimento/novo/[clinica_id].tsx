@@ -95,32 +95,6 @@ export default function Atendimento(props: interfProps) {
         }
     },[]);
 
-    // useEffect(() => {
-    //     // const idParam = Number(id);
-
-    //     if(Number.isInteger(idParam)) {
-    //         setEstaEditando(true);
-
-    //         api.get('/Atendimentos/'+idParam, {
-    //             headers: {
-    //                 'Authorization': `Bearer ${props.token}`
-    //             }
-    //         }).then((res) => {
-    //             //Aqui dá pra fazer uma mensagem se res.data.status === "Token is Expired"
-    //             if(res.data) {
-    //                 refForm.current['clienteId'].value = res.data.clienteId;
-    //                 refForm.current['medicoId'].value = res.data.medicoId;
-    //                 refForm.current['tipo_Atendimento'].value = res.data.tipo_Atendimento;
-    //                 refForm.current['data_Atendimento'].value = res.data.data_Atendimento;
-    //                 refForm.current['observacao'].value = res.data.observacao;
-    //             }
-
-    //         }).catch((erro) => {
-    //             console.log(erro);
-    //         })
-    //     }
-    // }, [])
-
     useEffect(() => {
         const idParam = Number(clinica_id);
 
@@ -180,7 +154,7 @@ export default function Atendimento(props: interfProps) {
     }
     
     function findMedico() {
-        api.get("/Medicos", {
+        api.get(`/Medicos/GetMedicosByClinica/${clinica_id}`, {
             headers: {
                 Authorization: "Bearer " + props.token,
             },
@@ -198,6 +172,7 @@ export default function Atendimento(props: interfProps) {
                     }
                     );
                 } else {
+                  console.log(res.data);
                   setMedicos(res.data);
                 }
             })
@@ -419,6 +394,7 @@ export default function Atendimento(props: interfProps) {
                                 <option value=''>Selecione</option>
                                 <option value='Consulta'>Consulta</option>
                                 <option value='Exame'>Exame</option>
+                                <option value='Retorno'>Retorno</option>
                             </select>
                             <div className='invalid-feedback'>
                                 Por favor, informe o tipo de Atendimento.
@@ -441,6 +417,8 @@ export default function Atendimento(props: interfProps) {
                                 type='date'
                                 className='form-control'
                                 id="data_Atendimento"
+                                //Valor padrão para data atual
+                                defaultValue={new Date().toISOString().split('T')[0]}
                                 // required
                             />
                             <div className='invalid-feedback'>
@@ -464,6 +442,7 @@ export default function Atendimento(props: interfProps) {
                             <textarea
                                 className='form-control'
                                 id='observacao'
+                                placeholder='Informe a observação'
                                 required
                             ></textarea>
                             <div className='invalid-feedback'>
@@ -569,7 +548,7 @@ export default function Atendimento(props: interfProps) {
                                         <tr>
                                             <th scope='col'>Nome</th>
                                             <th scope='col'>Especialidade</th>
-                                            <th scope='col'>Unidade</th>
+                                            <th scope='col'>Clínica</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -583,7 +562,7 @@ export default function Atendimento(props: interfProps) {
                                                 >
                                                     <td>{medico.nome}</td>
                                                     <td>{medico.especialidade}</td>
-                                                    <td>{medico.clinica.nome}</td>
+                                                    <td>{clinica_nome}</td>
                                                 </tr>
                                             )
                                         }

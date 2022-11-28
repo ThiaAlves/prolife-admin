@@ -104,9 +104,11 @@ export default function Atendimento(props: interfProps) {
                     'Authorization': `Bearer ${props.token}`
                 }
             }).then((res) => {
+
                 //Aqui dá pra fazer uma mensagem se res.data.status === "Token is Expired"
                 if(res.data) {
                     refForm.current['clienteId'].value = res.data.clienteId;
+                    refForm.current['clinicaId'].value = res.data.clinicaId;
                     refForm.current['medicoId'].value = res.data.medicoId;
                     refForm.current['tipo_Atendimento'].value = res.data.tipo_Atendimento;
                     refForm.current['data_Atendimento'].value = res.data.data_Atendimento;
@@ -237,7 +239,8 @@ export default function Atendimento(props: interfProps) {
                         res.data.message,
                         'success'
                     )
-                    router.push('/atendimento');
+                    router.back();
+
     
                 }).catch((erro) => {
                     console.log(erro);
@@ -256,7 +259,8 @@ export default function Atendimento(props: interfProps) {
                         res.data.message,
                         'success'
                     )
-                    router.push('/atendimento');
+                    router.back();
+
 
                 }).catch((erro) => {
                     console.log(erro);
@@ -296,6 +300,17 @@ export default function Atendimento(props: interfProps) {
                                 id="id"
                                 readOnly
                                 value={id}
+                            />
+                        </div>
+                        </div>
+                        <div className="col-md-12" hidden>
+                        <div className="form-group">
+                            <label htmlFor="clinicaId">Clínica ID</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="clinicaId"
+                                readOnly
                             />
                         </div>
                         </div>
@@ -400,6 +415,7 @@ export default function Atendimento(props: interfProps) {
                                 <option value=''>Selecione</option>
                                 <option value='Consulta'>Consulta</option>
                                 <option value='Exame'>Exame</option>
+                                <option value='Retorno'>Retorno</option>
                             </select>
                             <div className='invalid-feedback'>
                                 Por favor, informe o tipo de Atendimento.
